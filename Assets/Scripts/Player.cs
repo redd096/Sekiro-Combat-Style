@@ -1,48 +1,71 @@
-﻿using redd096;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using redd096;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] CameraBaseControl cameraControl;
+    [Header("Movement")]
     [SerializeField] float speed = 4;
+    [SerializeField] float jump = 10;
+    [Header("Check Ground")]
+    [SerializeField] Vector3 center;
+    [SerializeField] Vector3 size;
 
     Transform cam;
-    Animator anim;
     Rigidbody rb;
+
+    //check in a box, if hit something other than the player
+    bool isGrounded => Physics.OverlapBox(transform.position + center, size / 2, transform.rotation, CreateLayer.LayerAllExcept("Player"), QueryTriggerInteraction.Ignore).Length > 0;
 
     void Awake()
     {
+        //get references
         cam = Camera.main.transform;
-        anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody>();
         
+        //set default camera
         cameraControl.StartDefault(cam, transform);
     }
 
     void Update()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
-
-        float mouseX = Input.GetAxis("Mouse X");
-        float mouseY = Input.GetAxis("Mouse Y");
-
-        //estrai o riponi arma
         //attacco
-        //inserire lock sul nemico? va a modificare il CameraBaseControl
+        //inserire lock sul nemico? usare SetRotation del cameraControl
 
-        Movement(horizontal, vertical);
+        //movement
+        Movement(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         MoveCamera();
-        Rotate(mouseX, mouseY);
+        Rotate(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+        Jump(Input.GetButtonDown("Jump"));
 
-        Animation(horizontal, vertical);
+        SwitchFight(Input.GetButtonDown("Fire3"));
     }
+
+    private void OnDrawGizmosSelected()
+    {
+        //draw check ground
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(transform.position + center, size);
+    }
+
+    #region private API
+
+    #region movement
 
     void Movement(float horizontal, float vertical)
     {
-        rb.velocity = Direction.WorldToLocalDirection(new Vector3(horizontal, 0, vertical) * speed, transform.rotation);
+        //get direction and current velocity (less y speed)
+        Vector3 direction = Direction.WorldToLocalDirection(new Vector3(horizontal, 0, vertical), transform.rotation);
+        Vector3 currentVelocity = rb.velocity - new Vector3(0, rb.velocity.y, 0);
+
+        //new velocity with clamp
+        Vector3 newVelocity = direction * speed - currentVelocity;
+        newVelocity = Vector3.ClampMagnitude(newVelocity, speed);
+
+        //set velocity (only x and y axis)
+        rb.AddForce(newVelocity, ForceMode.VelocityChange);
     }
 
     void MoveCamera()
@@ -55,9 +78,24 @@ public class Player : MonoBehaviour
         cameraControl.UpdateRotation(inputX, inputY);
     }
 
-    void Animation(float horizontal, float vertical)
+    void Jump(bool inputJump)
     {
-        anim.SetFloat("Horizontal", horizontal);
-        anim.SetFloat("Vertical", vertical);
+        //if press to jump and is grounded, jump (y axis)
+        if(inputJump && isGrounded)
+        {
+            rb.AddForce(transform.up * jump, ForceMode.VelocityChange);
+        }
     }
+
+    #endregion
+
+    void SwitchFight(bool inputSwitch)
+    {
+        if(inputSwitch)
+        {
+            //passa da combattimenti a pugni a combattimenti di spada
+        }
+    }
+
+    #endregion
 }

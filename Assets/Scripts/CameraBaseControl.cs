@@ -8,7 +8,7 @@
     {
         [Header("Important")]
         [SerializeField] Vector3 cameraOffset;
-        [SerializeField] bool firstPerson = true;
+        [SerializeField] bool firstPerson = false;
 
         [Header("Smooth")]
         [SerializeField] float smoothPosition = 50;
@@ -16,7 +16,7 @@
 
         [Header("Sensitivity")]
         [SerializeField] float sensitivityX = 200;
-        [SerializeField] float sensitivityY = 200;
+        [SerializeField] float sensitivityY = 100;
 
         [Header("Clamp X")]
         [SerializeField] float minX = -360f;
@@ -33,7 +33,7 @@
         #region IMPORTANT
 
         /// <summary>
-        /// Set references and default rotation
+        /// Call in Start or Awake. Set references and default rotation
         /// </summary>
         public void StartDefault(Transform cam, Transform player, bool setDefault = true)
         {
@@ -53,7 +53,7 @@
         }
 
         /// <summary>
-        /// Make the camera follow the player
+        /// Call in Update. Make the camera follow the player
         /// </summary>
         public void UpdateCameraPosition()
         {
@@ -70,7 +70,7 @@
         }
 
         /// <summary>
-        /// Rotate the camera by input
+        /// Call in Update. Rotate the camera by input
         /// </summary>
         public void UpdateRotation(float inputX, float inputY)
         {

@@ -46,8 +46,12 @@ public class Player : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         //draw check ground
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(transform.position + center, size);
+        Gizmos.color = Color.red; 
+
+        //matrix to use transform.rotation
+        Matrix4x4 rotationMatrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
+        Gizmos.matrix = rotationMatrix;
+        Gizmos.DrawWireCube(center, size);
     }
 
     #region private API

@@ -164,7 +164,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 633065192}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 413f106bd3e59744b90c60aea7e54f6b, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -287,14 +287,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 758808721}
-  m_LocalRotation: {x: -0, y: -0.6569153, z: -0, w: 0.75396436}
+  m_LocalRotation: {x: 0, y: -0.68638974, z: 0, w: 0.72723395}
   m_LocalPosition: {x: 0, y: 0, z: -1.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 252049276}
   m_Father: {fileID: 0}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: -82.130005, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -86.69, z: 0}
 --- !u!114 &758808723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -320,9 +320,8 @@ MonoBehaviour:
     maxY: 60
   speed: 4
   jump: 5
-  fallingSpeed: -10
   center: {x: 0, y: 0, z: 0}
-  size: {x: 0.5, y: 0.1, z: 0.5}
+  size: {x: 1.5, y: 0.1, z: 1}
 --- !u!54 &758808724
 Rigidbody:
   m_ObjectHideFlags: 0

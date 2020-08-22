@@ -14,12 +14,19 @@ public class PlayerGraphics : MonoBehaviour
     Vector3 previousSpeed;
     bool canJump;
 
-    void Start()
+    void Awake()
     {
         //get references
         player = GetComponent<Player>();
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody>();
+
+        //be sure to see only layer 0
+        anim.SetLayerWeight(1, 0);
+        anim.SetLayerWeight(2, 0);
+
+        //set events
+        AddEvents();
     }
 
     void Update()
@@ -28,8 +35,12 @@ public class PlayerGraphics : MonoBehaviour
         Movement();
         Jump();
         Falling();
+    }
 
-        SwitchFight(Input.GetButtonDown("Fire3"));
+    private void OnDestroy()
+    {
+        //remove events
+        RemoveEvents();
     }
 
     #region private API
@@ -77,15 +88,57 @@ public class PlayerGraphics : MonoBehaviour
 
     #endregion
 
-    void SwitchFight(bool inputSwitch)
+    #region events
+
+    void AddEvents()
+    {
+        //set events
+        player.OnSwitchFight = OnSwitchFight;
+        player.OnAttack = OnAttack;
+        player.OnEndAttack = OnEndAttack;
+        player.OnDead = OnDead;
+    }
+
+    void RemoveEvents()
+    {
+        //remove events
+        player.OnSwitchFight = null;
+        player.OnAttack = null;
+        player.OnEndAttack = null;
+        player.OnDead = null;
+    }
+
+    void OnSwitchFight(bool fightState)
     {
         //switch from unarmed to sword
-        if (inputSwitch)
-        {
-            anim.SetBool("Unarmed", !anim.GetBool("Unarmed"));
-            anim.SetTrigger("SwitchFight");
-        }
+        anim.SetBool("FightState", fightState);
+        anim.SetTrigger("SwitchFight");
     }
+
+    void OnAttack(bool isFirstAttack)
+    {
+        if(isFirstAttack)
+        {
+            anim.SetLayerWeight(1, 1);
+        }
+
+        //set attack
+        anim.SetBool("IsFirstAttack", isFirstAttack);
+        anim.SetTrigger("Attack");
+    }
+
+    void OnEndAttack()
+    {
+        anim.SetLayerWeight(1, 0);
+    }
+
+    void OnDead()
+    {
+        //set dead
+        anim.SetBool("Dead", true);
+    }
+
+    #endregion
 
     #endregion
 }

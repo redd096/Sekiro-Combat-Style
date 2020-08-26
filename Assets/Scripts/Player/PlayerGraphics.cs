@@ -5,7 +5,8 @@ using redd096;
 
 public class PlayerGraphics : MonoBehaviour
 {
-    [SerializeField] float smooth = 5;
+    [Tooltip("Smooth, used for movement animations")] [SerializeField] float smoothMovement = 5;
+    [Tooltip("Time to set weight of the layer. Smooth used for blend from movement to attack or get hit animations")] [SerializeField] float durationBlendLayer = 0.5f;
 
     Player player;
     Animator anim;
@@ -13,6 +14,9 @@ public class PlayerGraphics : MonoBehaviour
 
     Vector3 previousSpeed;
     bool canJump;
+
+    Coroutine blendAttack_Coroutine;
+    Coroutine blendHit_Coroutine;
 
     void Awake()
     {
@@ -51,7 +55,7 @@ public class PlayerGraphics : MonoBehaviour
     {
         //smooth between previous speed to new speed, for movement animation
         Vector3 localVelocity = Direction.WorldToInverseLocalDirection(rb.velocity, transform.rotation).normalized;
-        Vector3 newSpeed = Vector3.Lerp(previousSpeed, localVelocity, Time.deltaTime * smooth);
+        Vector3 newSpeed = Vector3.Lerp(previousSpeed, localVelocity, Time.deltaTime * smoothMovement);
 
         //save previous speed
         previousSpeed = newSpeed;
@@ -108,18 +112,22 @@ public class PlayerGraphics : MonoBehaviour
         player.OnDead = null;
     }
 
-    void OnSwitchFight(bool fightState)
+    void OnSwitchFight(bool goTofightState)
     {
         //switch from unarmed to sword
-        anim.SetBool("FightState", fightState);
+        anim.SetBool("FightState", goTofightState);
         anim.SetTrigger("SwitchFight");
     }
 
     void OnAttack(bool isFirstAttack)
     {
+        //if first attack, start blend layer attack
         if(isFirstAttack)
         {
-            anim.SetLayerWeight(1, 1);
+            if (blendAttack_Coroutine != null)
+                StopCoroutine(blendAttack_Coroutine);
+
+            blendAttack_Coroutine = StartCoroutine(BlendLayer(1, 1));
         }
 
         //set attack
@@ -129,7 +137,11 @@ public class PlayerGraphics : MonoBehaviour
 
     void OnEndAttack()
     {
-        anim.SetLayerWeight(1, 0);
+        //end attack, blend layer to 0
+        if (blendAttack_Coroutine != null)
+            StopCoroutine(blendAttack_Coroutine);
+
+        blendAttack_Coroutine = StartCoroutine(BlendLayer(1, 0));
     }
 
     void OnDead()
@@ -139,6 +151,26 @@ public class PlayerGraphics : MonoBehaviour
     }
 
     #endregion
+
+    IEnumerator BlendLayer(int layerIndex, float weight)
+    {
+        //set start
+        float delta = 0;
+        float startWeight = anim.GetLayerWeight(layerIndex);
+
+        //blend
+        while (delta < 1)
+        {
+            delta += Time.deltaTime / durationBlendLayer;
+
+            float newWeight = Mathf.Lerp(startWeight, weight, delta);
+
+            //set layer weight
+            anim.SetLayerWeight(layerIndex, newWeight);
+
+            yield return null;
+        }
+    }
 
     #endregion
 }

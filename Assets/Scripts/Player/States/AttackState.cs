@@ -11,13 +11,13 @@ public class AttackState : PlayerState
     [System.Serializable]
     public struct AttackStruct
     {
-        public float durationAttack;
-        public float damage;
+        [Tooltip("After this time, check if do another attack or end combo")] public float durationAttack;
+        [Tooltip("Damage for this attack")] public float damage;
     }
 
     #endregion
 
-    [SerializeField] AttackStruct[] attacks = default;
+    [Tooltip("List of attacks for this combo")] [SerializeField] AttackStruct[] attacks = default;
 
     int attackIndex;
     bool goToNextAttack;
@@ -44,7 +44,7 @@ public class AttackState : PlayerState
             yield return new WaitForSeconds(attacks[attackIndex].durationAttack);
 
             //check if really ended or go to next attack
-            if (CheckEndAttack())
+            if (CheckEndCombo())
                 break;
         }
 
@@ -81,7 +81,7 @@ public class AttackState : PlayerState
         }
     }
 
-    bool CheckEndAttack()
+    bool CheckEndCombo()
     {
         //if clicked for next attack, go to next attack
         if (goToNextAttack)
@@ -92,7 +92,7 @@ public class AttackState : PlayerState
             return false;
         }
 
-        //else end attack
+        //else end combo
         return true;
     }
 

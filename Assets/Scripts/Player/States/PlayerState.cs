@@ -54,7 +54,12 @@ public class PlayerState : State
         if (enemy)
         {
             Vector3 lookEnemy = enemy.transform.position - transform.position;
-            cameraControl.SetRotation(Quaternion.LookRotation(lookEnemy, transform.up));
+            Debug.Log(lookEnemy.normalized + "- <color=red> " + transform.position + " / " + enemy.transform.position + " </color>");
+            cameraControl.SetRotation(lookEnemy);
+            //https://answers.unity.com/questions/600577/camera-rotation-around-player-while-following.html
+            //questo per far muovere la camera in terza persona che segue il player.
+            //Modifica per la prima persona: dovrà seguire il player invece di AngleAxis e dovrà guardare il player.forward + una rotazione sull'asse y (che potrebbe portarmi punto e a capo)
+            //Il player invece ha uno script a parte per ruotare. Si divide player e Camera
         }
     }
 

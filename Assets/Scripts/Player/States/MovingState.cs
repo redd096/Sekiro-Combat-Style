@@ -57,6 +57,8 @@ public class MovingState : PlayerState
         if (inputJump && player.isGrounded)
         {
             rb.AddForce(transform.up * jump, ForceMode.VelocityChange);
+
+            player.OnJump?.Invoke();
         }
     }
 

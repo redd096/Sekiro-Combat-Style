@@ -13,7 +13,6 @@ public class PlayerGraphics : MonoBehaviour
     Rigidbody rb;
 
     Vector3 previousSpeed;
-    bool canJump;
 
     Coroutine blendAttack_Coroutine;
     Coroutine blendHit_Coroutine;
@@ -37,7 +36,6 @@ public class PlayerGraphics : MonoBehaviour
     {
         //movement
         Movement();
-        Jump();
         Falling();
     }
 
@@ -65,22 +63,6 @@ public class PlayerGraphics : MonoBehaviour
         anim.SetFloat("Vertical", newSpeed.z);
     }
 
-    void Jump()
-    {
-        //if rigidbody is going up and player can jump, do it
-        if (rb.velocity.y > 0.5f && canJump)
-        {
-            anim.SetTrigger("Jump");
-            canJump = false;
-        }
-
-        //check if falling or grounded, so can jump again
-        if(rb.velocity.y <= 0 && canJump == false)
-        {
-            canJump = true;
-        }
-    }
-
     void Falling()
     {
         //set if falling
@@ -97,6 +79,7 @@ public class PlayerGraphics : MonoBehaviour
     void AddEvents()
     {
         //set events
+        player.OnJump = OnJump;
         player.OnSwitchFight = OnSwitchFight;
         player.OnAttack = OnAttack;
         player.OnEndAttack = OnEndAttack;
@@ -106,10 +89,17 @@ public class PlayerGraphics : MonoBehaviour
     void RemoveEvents()
     {
         //remove events
+        player.OnJump = null;
         player.OnSwitchFight = null;
         player.OnAttack = null;
         player.OnEndAttack = null;
         player.OnDead = null;
+    }
+
+    void OnJump()
+    {
+        //jump animation
+        anim.SetTrigger("Jump");
     }
 
     void OnSwitchFight(bool goTofightState)

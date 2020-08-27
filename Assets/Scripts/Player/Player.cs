@@ -25,6 +25,7 @@ public class Player : StateMachine, IDamage
     public bool isGrounded => Physics.OverlapBox(transform.position + center, size / 2, transform.rotation, CreateLayer.LayerAllExcept("Player"), QueryTriggerInteraction.Ignore).Length > 0;
 
     //for animations
+    public System.Action OnJump;
     public System.Action<bool> OnSwitchFight;
     public System.Action<bool> OnAttack;
     public System.Action OnEndAttack;

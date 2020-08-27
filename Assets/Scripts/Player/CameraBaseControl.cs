@@ -142,7 +142,7 @@
 
         void DoRotation(Vector3 camEuler, Vector3 playerEuler)
         {
-            //set rotations - no smooth, cause there is a problem with gimble lock
+            //set rotations - no smooth, cause there is a problem with gimbal lock
             cam.eulerAngles = camEuler;
             player.eulerAngles = playerEuler;
         }

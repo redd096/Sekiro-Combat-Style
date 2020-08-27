@@ -11,13 +11,16 @@ public class AttackState : PlayerState
     [System.Serializable]
     public struct AttackStruct
     {
-        [Tooltip("After this time, check if do another attack or end combo")] public float durationAttack;
-        [Tooltip("Damage for this attack")] public float damage;
+        [Tooltip("After this time, check if do another attack or end combo")] 
+        public float durationAttack;
+        [Tooltip("Damage for this attack")] 
+        public float damage;
     }
 
     #endregion
 
-    [Tooltip("List of attacks for this combo")] [SerializeField] AttackStruct[] attacks = default;
+    [Tooltip("List of attacks for this combo")] 
+    [SerializeField] AttackStruct[] attacks = default;
 
     int attackIndex;
     bool goToNextAttack;

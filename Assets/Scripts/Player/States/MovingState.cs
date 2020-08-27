@@ -54,7 +54,7 @@ public class MovingState : PlayerState
     void Jump(bool inputJump)
     {
         //if press to jump and is grounded, jump (y axis)
-        if (inputJump && player.isGrounded)
+        if (inputJump && player.IsGrounded)
         {
             rb.AddForce(transform.up * jump, ForceMode.VelocityChange);
 

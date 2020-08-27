@@ -5,8 +5,10 @@ using redd096;
 
 public class PlayerGraphics : MonoBehaviour
 {
-    [Tooltip("Smooth, used for movement animations")] [SerializeField] float smoothMovement = 5;
-    [Tooltip("Time to set weight of the layer. Smooth used for blend from movement to attack or get hit animations")] [SerializeField] float durationBlendLayer = 0.5f;
+    [Tooltip("Smooth, used for movement animations")] 
+    [SerializeField] float smoothMovement = 5;
+    [Tooltip("Time to set weight of the layer. Smooth used for blend from movement to attack or get hit animations")] 
+    [SerializeField] float durationBlendLayer = 0.5f;
 
     Player player;
     Animator anim;

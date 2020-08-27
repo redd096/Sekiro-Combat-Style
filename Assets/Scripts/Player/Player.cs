@@ -22,7 +22,7 @@ public class Player : StateMachine, IDamage
     [SerializeField] float radius = 20;
 
     //check in a box, if hit something other than the player
-    public bool isGrounded => Physics.OverlapBox(transform.position + center, size / 2, transform.rotation, CreateLayer.LayerAllExcept("Player"), QueryTriggerInteraction.Ignore).Length > 0;
+    public bool IsGrounded => Physics.OverlapBox(transform.position + center, size / 2, transform.rotation, CreateLayer.LayerAllExcept("Player"), QueryTriggerInteraction.Ignore).Length > 0;
 
     //for animations
     public System.Action OnJump;
@@ -52,8 +52,6 @@ public class Player : StateMachine, IDamage
 
     void Update()
     {
-        //attacco
-
         state?.Execution();
     }
 

@@ -54,7 +54,6 @@ public class PlayerState : State
         if (enemy)
         {
             Vector3 lookEnemy = enemy.transform.position - transform.position;
-            Debug.Log(lookEnemy.normalized + "- <color=red> " + transform.position + " / " + enemy.transform.position + " </color>");
             cameraControl.SetRotation(Quaternion.LookRotation(lookEnemy));
         }
     }

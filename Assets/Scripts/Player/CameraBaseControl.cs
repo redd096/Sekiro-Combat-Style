@@ -160,17 +160,27 @@
         /// </summary>
         public void SetDefaultRotation()
         {
-            rotX = player.eulerAngles.y;
-            rotY = -cam.eulerAngles.x;
+            //maybe we need negative values, like -90 instead of 270, for example with clamp from -90 to 90
+            float rotationX = Angle.NegativeAngle(player.eulerAngles.y, minX, maxX);
+            float rotationY = Angle.NegativeAngle(cam.eulerAngles.x, minY, maxY);
+
+            //final set
+            rotX = rotationX;
+            rotY = -rotationY;
         }
 
         /// <summary>
         /// Set player and camera rotation
         /// </summary>
-        public void SetRotation(Vector3 rotation)
+        public void SetRotation(Vector3 euler)
         {
-            rotX = rotation.y;
-            rotY = -rotation.x;
+            //maybe we need negative values, like -90 instead of 270, for example with clamp from -90 to 90
+            float rotationX = Angle.NegativeAngle(euler.y, minX, maxX);
+            float rotationY = Angle.NegativeAngle(euler.x, minY, maxY);
+
+            //final set
+            rotX = rotationX;
+            rotY = -rotationY;
         }
 
         /// <summary>
@@ -180,8 +190,13 @@
         {
             Vector3 euler = rotation.eulerAngles;
 
-            rotX = euler.y;
-            rotY = -euler.x;
+            //maybe we need negative values, like -90 instead of 270, for example with clamp from -90 to 90
+            float rotationX = Angle.NegativeAngle(euler.y, minX, maxX);
+            float rotationY = Angle.NegativeAngle(euler.x, minY, maxY);
+
+            //final set
+            rotX = rotationX;
+            rotY = -rotationY;
         }
 
         #endregion

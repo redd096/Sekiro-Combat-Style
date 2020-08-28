@@ -5,10 +5,21 @@ using redd096;
 
 public class PlayerGraphics : MonoBehaviour
 {
+    [Header("Smooth")]
     [Tooltip("Smooth, used for movement animations")] 
     [SerializeField] float smoothMovement = 5;
     [Tooltip("Time to set weight of the layer. Smooth used for blend from movement to attack or get hit animations")] 
     [SerializeField] float durationBlendLayer = 0.5f;
+    [SerializeField] float durationLerpWeaponPosition = 0.2f;
+    [Header("Weapon")]
+    [Tooltip("Time to wait before change parent, when weapon go from holster to hand")]
+    [SerializeField] float timeToGrab = 0.3f;
+    [Tooltip("Time to wait before change parent, when weapon go from hand to holster")]
+    [SerializeField] float timeToRelease = 0.3f;
+    [Tooltip("Player hand used to grab weapon")]
+    [SerializeField] Transform hand = default;
+    [Tooltip("Player holster used to put weapon")]
+    [SerializeField] Transform holster = default;
 
     Player player;
     Animator anim;
@@ -29,6 +40,9 @@ public class PlayerGraphics : MonoBehaviour
         //be sure to see only layer 0
         anim.SetLayerWeight(1, 0);
         anim.SetLayerWeight(2, 0);
+
+        //get weapon and do switch fight animation
+        OnSwitchFight(anim.GetBool("FightState"));
 
         //set events
         AddEvents();
@@ -104,11 +118,14 @@ public class PlayerGraphics : MonoBehaviour
         anim.SetTrigger("Jump");
     }
 
-    void OnSwitchFight(bool goTofightState)
+    void OnSwitchFight(bool goToFightState)
     {
         //switch from unarmed to sword
-        anim.SetBool("FightState", goTofightState);
+        anim.SetBool("FightState", goToFightState);
         anim.SetTrigger("SwitchFight");
+
+        //change weapon position
+        WeaponChangePosition(goToFightState);
     }
 
     void OnAttack(bool isFirstAttack)
@@ -144,6 +161,8 @@ public class PlayerGraphics : MonoBehaviour
 
     #endregion
 
+    #region general
+
     IEnumerator BlendLayer(int layerIndex, float weight)
     {
         //set start
@@ -163,6 +182,17 @@ public class PlayerGraphics : MonoBehaviour
             yield return null;
         }
     }
+
+    void WeaponChangePosition(bool goToFightState)
+    {
+        Transform parent = goToFightState ? hand : holster;
+        float timeToWait = goToFightState ? timeToGrab : timeToRelease;
+
+        //change weapon parent
+        player.weapon.ChangeParent(parent, timeToWait, durationLerpWeaponPosition);
+    }
+
+    #endregion
 
     #endregion
 }

@@ -9,6 +9,7 @@ public class Player : StateMachine, IDamage
 
     [Header("Player")]
     public float maxHealth = 100;
+    public MeleeWeapon weapon;
     [Header("Player States")]
     public MovingState movingState;
     public FightState fightState;
@@ -33,7 +34,6 @@ public class Player : StateMachine, IDamage
 
     [Header("Debug")]
     [SerializeField] float currentHealth;
-
     Enemy enemy;
 
     #endregion

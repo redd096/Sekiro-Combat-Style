@@ -9,18 +9,8 @@ public class MovingState : PlayerState
     [SerializeField] protected float speed = 4;
     [SerializeField] protected float jump = 5;
 
-    Rigidbody rb;
-
     public MovingState(StateMachine stateMachine) : base(stateMachine)
     {
-    }
-
-    public override void Awake(StateMachine stateMachine)
-    {
-        base.Awake(stateMachine);
-
-        //get references
-        rb = transform.GetComponent<Rigidbody>();
     }
 
     public override void Execution()
@@ -39,16 +29,11 @@ public class MovingState : PlayerState
 
     void Movement(float horizontal, float vertical)
     {
-        //get direction and current velocity (less y speed)
+        //get direction by input
         Vector3 direction = Direction.WorldToLocalDirection(new Vector3(horizontal, 0, vertical), transform.rotation);
-        Vector3 currentVelocity = rb.velocity - new Vector3(0, rb.velocity.y, 0);
 
-        //new velocity with clamp
-        Vector3 newVelocity = direction * speed - currentVelocity;
-        newVelocity = Vector3.ClampMagnitude(newVelocity, speed);
-
-        //set velocity (only x and z axis)
-        rb.AddForce(newVelocity, ForceMode.VelocityChange);
+        //do movement
+        DoMovement(direction, speed);
     }
 
     void Jump(bool inputJump)

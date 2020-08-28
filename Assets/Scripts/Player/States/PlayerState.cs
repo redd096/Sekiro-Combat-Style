@@ -7,6 +7,7 @@ public class PlayerState : State
 {
     protected Player player;
     protected Transform transform;
+    protected Rigidbody rb;
     protected CameraBaseControl cameraControl;
 
     public PlayerState(StateMachine stateMachine) : base(stateMachine)
@@ -20,6 +21,7 @@ public class PlayerState : State
         //get references
         player = stateMachine as Player;
         transform = player.transform;
+        rb = transform.GetComponent<Rigidbody>();
         cameraControl = player.cameraControl;
     }
 
@@ -56,6 +58,28 @@ public class PlayerState : State
             Vector3 lookEnemy = enemy.transform.position - transform.position;
             cameraControl.SetRotation(Quaternion.LookRotation(lookEnemy));
         }
+    }
+
+    protected void DoMovement(Vector3 direction, float speed)
+    {
+        //get current velocity (less y speed)
+        Vector3 currentVelocity = rb.velocity - new Vector3(0, rb.velocity.y, 0);
+
+        //new velocity with clamp
+        Vector3 newVelocity = direction * speed - currentVelocity;
+        newVelocity = Vector3.ClampMagnitude(newVelocity, speed);
+
+        //set velocity (only x and z axis)
+        rb.AddForce(newVelocity, ForceMode.VelocityChange);
+    }
+
+    protected void StopMovement()
+    {
+        //get current velocity (less y speed)
+        Vector3 currentVelocity = rb.velocity - new Vector3(0, rb.velocity.y, 0);
+
+        //set velocity (only x and z axis)
+        rb.AddForce(-currentVelocity, ForceMode.VelocityChange);
     }
 
     #endregion

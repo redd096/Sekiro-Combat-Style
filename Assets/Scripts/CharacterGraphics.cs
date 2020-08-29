@@ -10,12 +10,13 @@ public class CharacterGraphics : MonoBehaviour
     [SerializeField] float smoothMovement = 5;
     [Tooltip("Time to set weight of the layer. Smooth used for blend from movement to attack or get hit animations")] 
     [SerializeField] float durationBlendLayer = 0.5f;
+    [Tooltip("Duration of the weapon lerp. Used when change from hand to holster or viceversa")]
     [SerializeField] float durationLerpWeaponPosition = 0.2f;
     [Header("Weapon")]
     [Tooltip("Time to wait before change parent, when weapon go from holster to hand")]
-    [SerializeField] float timeToGrab = 0.3f;
+    [SerializeField] float timeBeforeGrab = 0.3f;
     [Tooltip("Time to wait before change parent, when weapon go from hand to holster")]
-    [SerializeField] float timeToRelease = 0.3f;
+    [SerializeField] float timeBeforeRelease = 0.3f;
     [Tooltip("Player hand used to grab weapon")]
     [SerializeField] Transform hand = default;
     [Tooltip("Player holster used to put weapon")]
@@ -187,7 +188,7 @@ public class CharacterGraphics : MonoBehaviour
     void WeaponChangePosition(bool goToFightState)
     {
         Transform parent = goToFightState ? hand : holster;
-        float timeToWait = goToFightState ? timeToGrab : timeToRelease;
+        float timeToWait = goToFightState ? timeBeforeGrab : timeBeforeRelease;
 
         //change weapon parent
         character.weapon.ChangeParent(parent, timeToWait, durationLerpWeaponPosition);

@@ -6,8 +6,7 @@ public class Enemy : Character
 {
     void Start()
     {
-        //set default values
-        currentHealth = maxHealth;
+        
     }
 
     void Update()

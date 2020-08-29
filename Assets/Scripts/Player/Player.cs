@@ -26,11 +26,8 @@ public class Player : Character
 
     #endregion
 
-    void Awake()
+    void Start()
     {
-        //set default values
-        currentHealth = maxHealth;
-
         //set default camera
         cameraControl.StartDefault(Camera.main.transform, transform);
 

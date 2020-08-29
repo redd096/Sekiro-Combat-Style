@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Character : StateMachine, IDamage
 {
@@ -21,9 +22,27 @@ public class Character : StateMachine, IDamage
     public System.Action OnEndAttack;
     public System.Action OnDead;
 
+    Slider healthBar;
+
     #endregion
 
-    #region public API
+    void Awake()
+    {
+        //set default values
+        currentHealth = maxHealth;
+
+        //get health bar
+        healthBar = GetComponentInChildren<Slider>();
+        UpdateHealthBar();
+    }
+
+    #region API
+
+    void UpdateHealthBar()
+    {
+        //update health bar value
+        healthBar.value = currentHealth / maxHealth;
+    }
 
     public void ApplyDamage(float damage)
     {
@@ -33,7 +52,9 @@ public class Character : StateMachine, IDamage
 
         //apply damage
         currentHealth -= damage;
+        UpdateHealthBar();
 
+        //die
         if (currentHealth <= 0)
         {
             OnDead?.Invoke();

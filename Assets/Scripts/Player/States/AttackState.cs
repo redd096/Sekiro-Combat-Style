@@ -13,6 +13,8 @@ public class AttackState : PlayerState
     {
         [Tooltip("After this time, check if player clicked again, so do another attack, or end combo")] 
         public float timeBeforeNextAttack;
+        [Tooltip("Time to wait before check if hit something")]
+        public float timePrepareAttack;
         [Tooltip("Time to check if hit something")]
         public float durationAttack;
         [Tooltip("Damage for this attack")] 
@@ -121,12 +123,15 @@ public class AttackState : PlayerState
 
     IEnumerator Attack_Coroutine()
     {
-        float time = Time.time + currentAttack.durationAttack;
+        //wait before check damage
+        yield return new WaitForSeconds(currentAttack.timePrepareAttack);
 
         //reset weapon previous positions
         player.weapon.Attack(true);
 
         //do damage for all the attack duration
+        float time = Time.time + currentAttack.durationAttack;
+
         while (Time.time < time)
         {
             DoDamage();

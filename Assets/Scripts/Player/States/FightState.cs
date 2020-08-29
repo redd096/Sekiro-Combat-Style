@@ -18,28 +18,21 @@ public class FightState : MovingState
         LookEnemy();
 
         //defense
-        StartDefend(Input.GetButtonDown("Fire2"));
-        StopDefend(Input.GetButtonUp("Fire2"));
+        Defend(Input.GetButton("Fire2"));
 
         //attack
         Attack(Input.GetButtonDown("Fire1"));
     }
 
-    #region private API
-
-    void StartDefend(bool inputDefense)
+    void Defend(bool inputDefend)
     {
-        //if press input, start defense
-        if (inputDefense)
+        //if press input, start defend
+        if (inputDefend)
         {
             player.StartDefend();
         }
-    }
-
-    void StopDefend(bool inputStopDefense)
-    {
-        //if release input, stop defense
-        if (inputStopDefense)
+        //else, stop defend
+        else
         {
             player.StopDefend();
         }
@@ -60,14 +53,15 @@ public class FightState : MovingState
         }
     }
 
-    #endregion
-
     protected override void SwitchFight(bool inputSwitch)
     {
         //if press input, come back to moving state
         if (inputSwitch)
         {
             player.SetState(player.movingState);
+
+            //remove defense
+            player.StopDefend();
 
             //animation switch fight
             player.OnSwitchFight?.Invoke(false);

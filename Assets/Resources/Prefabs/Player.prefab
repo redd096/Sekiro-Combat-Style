@@ -526,9 +526,10 @@ MonoBehaviour:
   maxDefense: 100
   minimumDefense: 9
   delayRecharge: 2
-  rechargeSpeed: 0.5
+  rechargeSpeed: 1
   timeToDeflect: 0.2
-  deflectDamage: 100
+  getDeflectedDamage: 100
+  timeStunned: 2
   healthBar: {fileID: 1517603214}
   defenseBar: {fileID: 2315391837720192442}
   currentHealth: 0

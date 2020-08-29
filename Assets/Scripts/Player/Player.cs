@@ -111,7 +111,7 @@ public class Player : Character
         {
             //find nearest enemy
             Collider[] enemies = Physics.OverlapSphere(transform.position, radius, CreateLayer.LayerOnly("Enemy"), QueryTriggerInteraction.Ignore);
-            enemy = Utility.FindNearest(enemies, transform.position).GetComponentInParent<Enemy>();
+            enemy = Utility.FindNearest(enemies, transform.position)?.GetComponentInParent<Enemy>();
         }
 
         return enemy;

@@ -20,7 +20,7 @@ public class Character : StateMachine, IDamage
     [Tooltip("Time to wait before start recharging")]
     [SerializeField] float delayRecharge = 2;
     [Tooltip("How much recharge every second")]
-    [SerializeField] float rechargeSpeed = 0.5f;
+    [SerializeField] float rechargeSpeed = 1;
     [Tooltip("Time to deflect incoming attacks")]
     [SerializeField] float timeToDeflect = 0.2f;
 
@@ -97,6 +97,7 @@ public class Character : StateMachine, IDamage
     {
         //apply damage
         currentHealth -= damage;
+        currentHealth = Mathf.Max(currentHealth, 0);
         UpdateHealthBar();
 
         //die
@@ -110,6 +111,7 @@ public class Character : StateMachine, IDamage
     {
         //remove defense
         currentDefense -= damage;
+        currentDefense = Mathf.Max(currentDefense, 0);
         UpdateDefenseBar();
 
         //broke defense

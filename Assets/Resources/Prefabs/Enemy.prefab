@@ -654,21 +654,22 @@ MonoBehaviour:
   maxDefense: 100
   minimumDefense: 9
   delayRecharge: 2
-  rechargeSpeed: 0.5
+  rechargeSpeed: 1
   timeToDeflect: 0.2
-  deflectDamage: 100
+  getDeflectedDamage: 100
+  timeStunned: 2
   healthBar: {fileID: 6433027295331800998}
   defenseBar: {fileID: 7926571750901696477}
   currentHealth: 0
   currentDefense: 0
   distanceAttack: 1.5
   currentAttack:
-    timeBeforeNextAttack: 0
-    timePrepareAttack: 0
-    durationAttack: 0
-    damage: 0
-    slideSpeed: 0
-    durationSlider: 0
+    timeBeforeNextAttack: 0.8
+    timePrepareAttack: 0.1
+    durationAttack: 0.6
+    damage: 10
+    slideSpeed: 4
+    durationSlider: 0.5
 --- !u!114 &3784112722496991807
 MonoBehaviour:
   m_ObjectHideFlags: 0

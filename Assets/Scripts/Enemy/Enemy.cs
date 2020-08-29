@@ -13,6 +13,7 @@ public class Enemy : Character
     NavMeshAgent nav;
     Transform player;
 
+    [SerializeField] float delayAttack = 2;
     float timer;
 
     void Start()
@@ -49,12 +50,26 @@ public class Enemy : Character
 
     void AddEvents()
     {
+        OnStartStun += StartStun;
+        OnEndStun += EndStun;
         OnDead += Die;
     }
 
     void RemoveEvents()
     {
+        OnStartStun -= StartStun;
+        OnEndStun -= EndStun;
         OnDead -= Die;
+    }
+
+    void StartStun()
+    {
+        //mentre è stunnato, se viene colpito dal giocatore muore sul colpo
+    }
+
+    void EndStun()
+    {
+        //ritorna a inseguire il giocatore
     }
 
     void Die()
@@ -100,7 +115,7 @@ public class Enemy : Character
             weapon.Attack(currentAttack.timePrepareAttack, currentAttack.durationAttack, currentAttack.damage, layer, self);
 
             OnAttack?.Invoke(true);
-            timer = Time.time + 5;
+            timer = Time.time + delayAttack;
         }
     }
 

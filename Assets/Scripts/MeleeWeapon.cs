@@ -166,6 +166,9 @@ public class MeleeWeapon : MonoBehaviour
         {
             DoDamage(damage, layer, self);
 
+            //update positions every frame
+            UpdateMeleePreviousPositions();
+
             yield return null;
         }
     }

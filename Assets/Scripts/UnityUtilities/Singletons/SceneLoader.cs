@@ -12,8 +12,8 @@
         public void ResumeGame()
         {
             //hide pause menu and enable player input
-            //GameManager.instance.uiManager.PauseMenu(false);
-            //GameManager.instance.player.enable = true;
+            GameManager.instance.uiManager.PauseMenu(false);
+            GameManager.instance.player.enabled = true;
 
             //hide cursor and set timeScale to 1
             Utility.LockMouse(CursorLockMode.Locked);
@@ -26,8 +26,8 @@
         public void PauseGame()
         {
             //show pause menu and disable player input
-            //GameManager.instance.uiManager.PauseMenu(true);
-            //GameManager.instance.player.enable = false;
+            GameManager.instance.uiManager.PauseMenu(true);
+            GameManager.instance.player.enabled = false;
 
             //show cursor and stop time
             Utility.LockMouse(CursorLockMode.None);

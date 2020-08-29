@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour, IDamage
+public class Enemy : Character, IDamage
 {
     [Header("Enemy")]
     [SerializeField] float maxHealth = 100;

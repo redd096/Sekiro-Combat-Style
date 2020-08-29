@@ -21,7 +21,7 @@ public class PlayerGraphics : MonoBehaviour
     [Tooltip("Player holster used to put weapon")]
     [SerializeField] Transform holster = default;
 
-    Player player;
+    Character character;
     Animator anim;
     Rigidbody rb;
 
@@ -33,7 +33,7 @@ public class PlayerGraphics : MonoBehaviour
     void Awake()
     {
         //get references
-        player = GetComponent<Player>();
+        character = GetComponent<Character>();
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody>();
 
@@ -95,21 +95,21 @@ public class PlayerGraphics : MonoBehaviour
     void AddEvents()
     {
         //set events
-        player.OnJump = OnJump;
-        player.OnSwitchFight = OnSwitchFight;
-        player.OnAttack = OnAttack;
-        player.OnEndAttack = OnEndAttack;
-        player.OnDead = OnDead;
+        character.OnJump = OnJump;
+        character.OnSwitchFight = OnSwitchFight;
+        character.OnAttack = OnAttack;
+        character.OnEndAttack = OnEndAttack;
+        character.OnDead = OnDead;
     }
 
     void RemoveEvents()
     {
         //remove events
-        player.OnJump = null;
-        player.OnSwitchFight = null;
-        player.OnAttack = null;
-        player.OnEndAttack = null;
-        player.OnDead = null;
+        character.OnJump = null;
+        character.OnSwitchFight = null;
+        character.OnAttack = null;
+        character.OnEndAttack = null;
+        character.OnDead = null;
     }
 
     void OnJump()
@@ -189,7 +189,7 @@ public class PlayerGraphics : MonoBehaviour
         float timeToWait = goToFightState ? timeToGrab : timeToRelease;
 
         //change weapon parent
-        player.weapon.ChangeParent(parent, timeToWait, durationLerpWeaponPosition);
+        character.weapon.ChangeParent(parent, timeToWait, durationLerpWeaponPosition);
     }
 
     #endregion

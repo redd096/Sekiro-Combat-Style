@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using redd096;
 
-public class Player : StateMachine, IDamage
+public class Player : Character, IDamage
 {
     #region variables
 
     [Header("Player")]
-    public float maxHealth = 100;
-    public MeleeWeapon weapon;
+    [SerializeField] float maxHealth = 100;
     [Header("Player States")]
     public MovingState movingState;
     public FightState fightState;
@@ -24,13 +23,6 @@ public class Player : StateMachine, IDamage
 
     //check in a box, if hit something other than the player
     public bool IsGrounded => Physics.OverlapBox(transform.position + center, size / 2, transform.rotation, CreateLayer.LayerAllExcept("Player"), QueryTriggerInteraction.Ignore).Length > 0;
-
-    //for animations
-    public System.Action OnJump;
-    public System.Action<bool> OnSwitchFight;
-    public System.Action<bool> OnAttack;
-    public System.Action OnEndAttack;
-    public System.Action OnDead;
 
     [Header("Debug")]
     [SerializeField] float currentHealth;

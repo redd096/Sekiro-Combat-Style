@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using redd096;
 
-public class PlayerGraphics : MonoBehaviour
+public class CharacterGraphics : MonoBehaviour
 {
     [Header("Smooth")]
     [Tooltip("Smooth, used for movement animations")] 
@@ -157,6 +157,7 @@ public class PlayerGraphics : MonoBehaviour
     {
         //set dead
         anim.SetBool("Dead", true);
+        anim.SetTrigger("Die");
     }
 
     #endregion

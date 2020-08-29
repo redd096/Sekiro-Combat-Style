@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using redd096;
 
-public class Player : Character, IDamage
+public class Player : Character
 {
     #region variables
 
-    [Header("Player")]
-    [SerializeField] float maxHealth = 100;
     [Header("Player States")]
     public MovingState movingState;
     public FightState fightState;
@@ -24,8 +22,6 @@ public class Player : Character, IDamage
     //check in a box, if hit something other than the player
     public bool IsGrounded => Physics.OverlapBox(transform.position + center, size / 2, transform.rotation, CreateLayer.LayerAllExcept("Player"), QueryTriggerInteraction.Ignore).Length > 0;
 
-    [Header("Debug")]
-    [SerializeField] float currentHealth;
     Enemy enemy;
 
     #endregion
@@ -64,17 +60,6 @@ public class Player : Character, IDamage
     }
 
     #region public API
-
-    public void ApplyDamage(float damage)
-    {
-        //apply damage
-        currentHealth -= damage;
-
-        if(currentHealth <= 0)
-        {
-            OnDead?.Invoke();
-        }
-    }
 
     public Enemy GetEnemy()
     {

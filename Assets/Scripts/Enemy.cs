@@ -2,14 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : Character, IDamage
+public class Enemy : Character
 {
-    [Header("Enemy")]
-    [SerializeField] float maxHealth = 100;
-
-    [Header("Debug")]
-    [SerializeField] float currentHealth;
-
     void Start()
     {
         //set default values
@@ -19,19 +13,5 @@ public class Enemy : Character, IDamage
     void Update()
     {
 
-    }
-
-    public void ApplyDamage(float damage)
-    {
-        //apply damage
-        currentHealth -= damage;
-
-        Debug.Log(currentHealth);
-
-        if (currentHealth <= 0)
-        {
-            //Die
-            Debug.Log("Dead");
-        }
     }
 }

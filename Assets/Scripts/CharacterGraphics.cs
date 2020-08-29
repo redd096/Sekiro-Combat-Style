@@ -31,7 +31,7 @@ public class CharacterGraphics : MonoBehaviour
     Coroutine blendAttack_Coroutine;
     Coroutine blendHit_Coroutine;
 
-    void Awake()
+    protected virtual void Awake()
     {
         //get references
         character = GetComponent<Character>();
@@ -66,10 +66,15 @@ public class CharacterGraphics : MonoBehaviour
 
     #region movement
 
+    protected virtual Vector3 GetVelocity()
+    {
+        return rb.velocity;
+    }
+
     void Movement()
     {
         //smooth between previous speed to new speed, for movement animation
-        Vector3 localVelocity = Direction.WorldToInverseLocalDirection(rb.velocity, transform.rotation).normalized;
+        Vector3 localVelocity = Direction.WorldToInverseLocalDirection(GetVelocity(), transform.rotation).normalized;
         Vector3 newSpeed = Vector3.Lerp(previousSpeed, localVelocity, Time.deltaTime * smoothMovement);
 
         //save previous speed
@@ -83,7 +88,7 @@ public class CharacterGraphics : MonoBehaviour
     void Falling()
     {
         //set if falling
-        if (rb.velocity.y < -0.5f)
+        if (GetVelocity().y < -0.5f)
             anim.SetBool("Falling", true);
         else
             anim.SetBool("Falling", false);
@@ -96,21 +101,21 @@ public class CharacterGraphics : MonoBehaviour
     void AddEvents()
     {
         //set events
-        character.OnJump = OnJump;
-        character.OnSwitchFight = OnSwitchFight;
-        character.OnAttack = OnAttack;
-        character.OnEndAttack = OnEndAttack;
-        character.OnDead = OnDead;
+        character.OnJump += OnJump;
+        character.OnSwitchFight += OnSwitchFight;
+        character.OnAttack += OnAttack;
+        character.OnEndAttack += OnEndAttack;
+        character.OnDead += OnDead;
     }
 
     void RemoveEvents()
     {
         //remove events
-        character.OnJump = null;
-        character.OnSwitchFight = null;
-        character.OnAttack = null;
-        character.OnEndAttack = null;
-        character.OnDead = null;
+        character.OnJump -= OnJump;
+        character.OnSwitchFight -= OnSwitchFight;
+        character.OnAttack -= OnAttack;
+        character.OnEndAttack -= OnEndAttack;
+        character.OnDead -= OnDead;
     }
 
     void OnJump()

@@ -19,7 +19,7 @@
             //if there is a player, lock mouse
             if (player)
             {
-                SceneLoader.instance.ResumeGame();
+                FindObjectOfType<SceneLoader>().ResumeGame();
             }
         }
 

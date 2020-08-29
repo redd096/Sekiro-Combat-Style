@@ -1,5 +1,6 @@
 ﻿
 public interface IDamage
 {
-    void ApplyDamage(float damage);
+    void ApplyDamage(IDamage instigator, float damage);
+    void AttackGetDeflected();
 }

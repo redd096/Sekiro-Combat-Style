@@ -17,8 +17,32 @@ public class FightState : MovingState
         //lock cam to enemy
         LookEnemy();
 
+        //defense
+        StartDefend(Input.GetButtonDown("Fire2"));
+        StopDefend(Input.GetButtonUp("Fire2"));
+
         //attack
         Attack(Input.GetButtonDown("Fire1"));
+    }
+
+    #region private API
+
+    void StartDefend(bool inputDefense)
+    {
+        //if press input, start defense
+        if (inputDefense)
+        {
+            player.StartDefend();
+        }
+    }
+
+    void StopDefend(bool inputStopDefense)
+    {
+        //if release input, stop defense
+        if (inputStopDefense)
+        {
+            player.StopDefend();
+        }
     }
 
     void Attack(bool inputAttack)
@@ -28,10 +52,15 @@ public class FightState : MovingState
         {
             player.SetState(player.attackState);
 
+            //remove defense
+            player.StopDefend();
+
             //animation first attack
             player.OnAttack?.Invoke(true);
         }
     }
+
+    #endregion
 
     protected override void SwitchFight(bool inputSwitch)
     {

@@ -33,6 +33,9 @@ public class Player : Character
 
         //set state
         SetState(movingState);
+
+        //add events
+        AddEvents();
     }
 
     void Update()
@@ -55,6 +58,49 @@ public class Player : Character
 
         Gizmos.DrawWireSphere(transform.position, radius);
     }
+
+    private void OnDestroy()
+    {
+        //remove events
+        RemoveEvents();
+    }
+
+    #region events
+
+    void AddEvents()
+    {
+        OnStartStun += StartStun;
+        OnEndStun += EndStun;
+        OnDead += Die;
+    }
+
+    void RemoveEvents()
+    {
+        OnStartStun -= StartStun;
+        OnEndStun -= EndStun;
+        OnDead -= Die;
+    }
+
+    void StartStun()
+    {
+        //cambia stato del giocatore, in uno che sta buono finché non finisce lo stun
+    }
+
+    void EndStun()
+    {
+        //ritorna al fight state 
+        //(lo stun parte solo se si è in difesa e ci si è rotto lo scudo... in futuro potrebbe partire in attack state se ci deflettono, ma sempre in fight state si torna)
+    }
+
+    void Die()
+    {
+        //deve entrare in uno stato di morte
+        //ovvero uno stato in cui deve smettere di muoversi, attaccare, ecc... e può solo cadere se non si trovava a terra (playerState.StopMovement())
+
+        //nel caso decidessi di riportarlo in vita, l'animazione di revive c'è, lo si fa tornare allo state precedente ed è a posto
+    }
+
+    #endregion
 
     #region public API
 

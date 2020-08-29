@@ -3,6 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public struct AttackStruct
+{
+    [Tooltip("After this time, check if player clicked again, so do another attack, or end combo")]
+    public float timeBeforeNextAttack;
+    [Tooltip("Time to wait before check if hit something")]
+    public float timePrepareAttack;
+    [Tooltip("Time to check if hit something")]
+    public float durationAttack;
+    [Tooltip("Damage for this attack")]
+    public float damage;
+    [Tooltip("Speed player slide forward when attack")]
+    public float slideSpeed;
+    [Tooltip("Time to slide forward when player attack")]
+    public float durationSlider;
+}
+
 public class MeleeWeapon : MonoBehaviour
 {
     [Header("Melee Points")]
@@ -21,7 +38,9 @@ public class MeleeWeapon : MonoBehaviour
 
     List<Transform> meleePoints = new List<Transform>();
     Vector3[] meleePreviousPositions;
+    List<IDamage> alreadyHits = new List<IDamage>();
 
+    Coroutine attack_Coroutine;
     Coroutine changeParent_Coroutine;
 
     void Start()
@@ -129,6 +148,88 @@ public class MeleeWeapon : MonoBehaviour
 
     #endregion
 
+    #region attack
+
+    IEnumerator Attack_Coroutine(float timePrepareAttack, float durationAttack, float damage, int layer, IDamage self)
+    {
+        //wait before check damage
+        yield return new WaitForSeconds(timePrepareAttack);
+
+        //reset hits and melee positions
+        alreadyHits = new List<IDamage>();
+        UpdateMeleePreviousPositions();
+
+        //do damage for all the attack duration
+        float time = Time.time + durationAttack;
+
+        while (Time.time < time)
+        {
+            DoDamage(damage, layer, self);
+
+            yield return null;
+        }
+    }
+
+    void DoDamage(float damage, int layer, IDamage self)
+    {
+        //get hits this frame
+        RaycastHit[] hits = GetHits(layer);
+
+        //foreach hit
+        foreach (RaycastHit hit in hits)
+        {
+            //only if hit something
+            if (hit.transform == null)
+                continue;
+
+            IDamage enemyHit = hit.transform.GetComponentInParent<IDamage>();
+
+            //if can hit
+            if (CanHit(enemyHit, self))
+            {
+                //add to already hits
+                alreadyHits.Add(enemyHit);
+
+                //and do damage
+                enemyHit.ApplyDamage(self, damage);
+            }
+        }
+    }
+
+    RaycastHit[] GetHits(int layer)
+    {
+        RaycastHit[] hits = new RaycastHit[meleePoints.Count];
+
+        //foreach melee point, get hits
+        for (int i = 0; i < meleePoints.Count; i++)
+        {
+            Physics.Linecast(meleePreviousPositions[i], meleePoints[i].position, out hits[i], layer, QueryTriggerInteraction.Ignore);
+
+            //draw debug
+            if (durationDebugTraces > 0)
+                Debug.DrawLine(meleePreviousPositions[i], meleePoints[i].position, Color.red, durationDebugTraces);
+        }
+
+        return hits;
+    }
+
+    bool CanHit(IDamage hit, IDamage self)
+    {
+        //if can damage
+        if (hit != null)
+        {
+            //check is not already hit and not hit self
+            bool notAlreadyHit = !alreadyHits.Contains(hit);
+            bool notHitSelf = hit != self;
+
+            return notAlreadyHit && notHitSelf;
+        }
+
+        return false;
+    }
+
+    #endregion
+
     #region general
 
     IEnumerator ChangeParent_Coroutine(Transform newParent, float timeToWait, float durationLerpWeaponPosition)
@@ -173,29 +274,29 @@ public class MeleeWeapon : MonoBehaviour
         transform.rotation = rotation;
     }
 
-    public RaycastHit[] Attack(bool onlyResetPositions = false)
+    /// <summary>
+    /// Swing weapon and apply damage
+    /// </summary>
+    /// <param name="timePrepareAttack">time to wait before do damage</param>
+    /// <param name="durationAttack">time to check if hit something</param>
+    /// <param name="damage">damage to apply</param>
+    /// <param name="layer">layer who hit</param>
+    /// <param name="objectsToIgnore">objects to ignore, for example the character who do the attack, to not hit self</param>
+    public void Attack(float timePrepareAttack, float durationAttack, float damage, int layer, IDamage self)
     {
-        RaycastHit[] hits = new RaycastHit[meleePoints.Count];
+        if (attack_Coroutine != null) 
+            StopCoroutine(attack_Coroutine);
 
-        //if only reset positions, don't get hits
-        if (onlyResetPositions == false)
-        {
-            //else foreach melee point, get hits
-            for (int i = 0; i < meleePoints.Count; i++)
-            {
-                Physics.Linecast(meleePreviousPositions[i], meleePoints[i].position, out hits[i], CreateLayer.LayerOnly("Enemy"), QueryTriggerInteraction.Ignore);
-
-                //draw debug
-                if(durationDebugTraces > 0)
-                    Debug.DrawLine(meleePreviousPositions[i], meleePoints[i].position, Color.red, durationDebugTraces);
-            }
-        }
-
-        //update melee positions and return every hit
-        UpdateMeleePreviousPositions();
-        return hits;
+        //start coroutine to attack
+        attack_Coroutine = StartCoroutine(Attack_Coroutine(timePrepareAttack, durationAttack, damage, layer, self));
     }
 
+    /// <summary>
+    /// Change parent, for example from hand to holster
+    /// </summary>
+    /// <param name="newParent">set new parent</param>
+    /// <param name="timeToWait">wait before change parent</param>
+    /// <param name="durationLerpWeaponPosition">lerp position from old parent to new one</param>
     public void ChangeParent(Transform newParent, float timeToWait, float durationLerpWeaponPosition)
     {
         if (changeParent_Coroutine != null)

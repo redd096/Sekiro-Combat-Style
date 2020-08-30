@@ -16,17 +16,19 @@ public class Enemy : Character
     [SerializeField] float delayAttack = 2;
     float timer;
 
+    bool stunned;
+
     void Start()
     {
         nav = GetComponent<NavMeshAgent>();
         player = GameManager.instance.player?.transform;
 
+        //add events
+        AddEvents();
+
         //equip sword
         if (player)
             OnSwitchFight?.Invoke(true);
-
-        //add events
-        AddEvents();
     }
 
     void Update()
@@ -64,12 +66,12 @@ public class Enemy : Character
 
     void StartStun()
     {
-        //mentre è stunnato, se viene colpito dal giocatore muore sul colpo
+        stunned = true;
     }
 
     void EndStun()
     {
-        //ritorna a inseguire il giocatore
+        stunned = false;
     }
 
     void Die()
@@ -116,7 +118,14 @@ public class Enemy : Character
 
             OnAttack?.Invoke(true);
             timer = Time.time + delayAttack;
+
+            Invoke("EndAttack", delayAttack);
         }
+    }
+
+    void EndAttack()
+    {
+        OnEndAttack?.Invoke();
     }
 
     #endregion
@@ -125,10 +134,28 @@ public class Enemy : Character
 
     bool CheckInRange()
     {
+        //check player distance
         return Vector3.Distance(transform.position, player.position) <= distanceAttack;
     }
 
     #endregion
+
+    #endregion
+
+    #region public API
+
+    public override void ApplyDamage(IDamage instigator, float damage)
+    {
+        //if stunned, instant dead
+        if (stunned)
+        {
+            KillSelf();
+            return;
+        }
+
+        //else normal damage
+        base.ApplyDamage(instigator, damage);
+    }
 
     #endregion
 }

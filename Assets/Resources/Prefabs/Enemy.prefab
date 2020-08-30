@@ -684,7 +684,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   smoothMovement: 5
-  durationBlendLayer: 0.5
+  durationBlendAttack: 0.5
+  durationBlendDefend: 0.2
   durationLerpWeaponPosition: 0.2
   timeBeforeGrab: 0.3
   timeBeforeRelease: 0.3

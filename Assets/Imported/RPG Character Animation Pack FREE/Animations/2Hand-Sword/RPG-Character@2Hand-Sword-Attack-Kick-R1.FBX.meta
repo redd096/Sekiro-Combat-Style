@@ -720,6 +720,9 @@ ModelImporter:
   - first:
       74: -5477205817525420928
     second: Deflect
+  - first:
+      74: 5897396374733110787
+    second: 2Hand-Sword-Attack-Kick-R1 Defend
   externalObjects: {}
   materials:
     importMaterials: 0

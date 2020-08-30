@@ -23,6 +23,8 @@ public class Character : StateMachine, IDamage
     [SerializeField] float rechargeSpeed = 1;
     [Tooltip("Time to deflect incoming attacks")]
     [SerializeField] float timeToDeflect = 0.2f;
+    [Tooltip("Duration animation of deflect")]
+    [SerializeField] float durationDeflectMove = 0.5f;
 
     [Header("Stun")]
     [Tooltip("Damage suffered to defense when attack is being deflected")]
@@ -55,10 +57,8 @@ public class Character : StateMachine, IDamage
     bool isDefending;
     float timeStartDefense;
     bool defenseIsBroken;
-    bool stunned;
 
     Coroutine rechargeDefense_Coroutine;
-    Coroutine stun_Coroutine;
 
     #endregion
 
@@ -71,6 +71,11 @@ public class Character : StateMachine, IDamage
         //update bars
         UpdateHealthBar();
         UpdateDefenseBar();
+    }
+
+    protected void KillSelf()
+    {
+        DamageHealth(currentHealth);
     }
 
     #region private API
@@ -144,7 +149,8 @@ public class Character : StateMachine, IDamage
         //deflect attack instead of get damage
         if(Time.time < timeStartDefense + timeToDeflect)
         {
-            instigator.AttackGetDeflected();
+            Deflect(instigator);
+
             return true;
         }
 
@@ -180,29 +186,33 @@ public class Character : StateMachine, IDamage
 
     #endregion
 
-    #region stun
+    #region deflect and stun
+
+    void Deflect(IDamage instigator)
+    {
+        //stop defend
+        StopDefend();
+
+        //deflect attack
+        instigator.AttackGetDeflected();
+        OnDeflectingAttack?.Invoke();
+
+        //wait, then come back to old state
+        SetWaitState(durationDeflectMove, state);
+    }
 
     void Stun()
     {
-        if (stun_Coroutine != null)
-            StopCoroutine(stun_Coroutine);
-
-        //start stun coroutine
-        stun_Coroutine = StartCoroutine(Stun_Coroutine());
-    }
-
-    IEnumerator Stun_Coroutine()
-    {
-        //start stun
-        stunned = true;
         OnStartStun?.Invoke();
 
-        //wait
-        yield return new WaitForSeconds(timeStunned);
+        //wait, then come back to old state
+        SetWaitState(timeStunned, state, OnEndStun);
+    }
 
-        //end stun
-        stunned = false;
-        OnEndStun?.Invoke();
+    protected virtual void SetWaitState(float timeToWait, State nextState, System.Action func = null)
+    {
+        //wait, then come back to old state
+        SetState(new WaitState(this, timeToWait, nextState, func));
     }
 
     #endregion
@@ -211,7 +221,7 @@ public class Character : StateMachine, IDamage
 
     #region public API
 
-    public void ApplyDamage(IDamage instigator, float damage)
+    public virtual void ApplyDamage(IDamage instigator, float damage)
     {
         //only if not already dead
         if (currentHealth <= 0)
@@ -237,8 +247,8 @@ public class Character : StateMachine, IDamage
         if (isDefending)
             return;
 
-        //if defense is not broken and character is not stunned
-        if(defenseIsBroken == false && stunned == false)
+        //if defense is not broken
+        if(defenseIsBroken == false)
         {
             //start defending
             isDefending = true;

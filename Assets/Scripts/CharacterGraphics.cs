@@ -8,11 +8,13 @@ public class CharacterGraphics : MonoBehaviour
     [Header("Smooth")]
     [Tooltip("Smooth, used for movement animations")] 
     [SerializeField] float smoothMovement = 5;
-    [Tooltip("Time to set weight of the layer. Smooth used for blend from movement to attack or get hit animations")] 
-    [SerializeField] float durationBlendLayer = 0.5f;
+    [Tooltip("Time to set weight of the attack layer")] 
+    [SerializeField] float durationBlendAttack = 0.5f;
+    [Tooltip("Time to set weight of the defend layer")]
+    [SerializeField] float durationBlendDefend = 0.2f;
+    [Header("Weapon")]
     [Tooltip("Duration of the weapon lerp. Used when change from hand to holster or viceversa")]
     [SerializeField] float durationLerpWeaponPosition = 0.2f;
-    [Header("Weapon")]
     [Tooltip("Time to wait before change parent, when weapon go from holster to hand")]
     [SerializeField] float timeBeforeGrab = 0.3f;
     [Tooltip("Time to wait before change parent, when weapon go from hand to holster")]
@@ -29,6 +31,7 @@ public class CharacterGraphics : MonoBehaviour
     Vector3 previousSpeed;
 
     Coroutine blendAttack_Coroutine;
+    Coroutine blendDefend_Coroutine;
     Coroutine blendHit_Coroutine;
 
     protected virtual void Awake()
@@ -101,20 +104,32 @@ public class CharacterGraphics : MonoBehaviour
     void AddEvents()
     {
         //set events
-        character.OnJump += OnJump;
-        character.OnSwitchFight += OnSwitchFight;
-        character.OnAttack += OnAttack;
-        character.OnEndAttack += OnEndAttack;
+        character.OnJump = OnJump;
+        character.OnSwitchFight = OnSwitchFight;
+        character.OnAttack = OnAttack;
+        character.OnEndAttack = OnEndAttack;
+        character.OnStartDefend = OnStartDefend;
+        character.OnEndDefend = OnEndDefend;
+        character.OnDeflectingAttack = OnDeflectingAttack;
+
+        character.OnStartStun += OnStartStun;
+        character.OnEndStun += OnEndStun;
         character.OnDead += OnDead;
-    }
+}
 
     void RemoveEvents()
     {
         //remove events
-        character.OnJump -= OnJump;
-        character.OnSwitchFight -= OnSwitchFight;
-        character.OnAttack -= OnAttack;
-        character.OnEndAttack -= OnEndAttack;
+        character.OnJump = null;
+        character.OnSwitchFight = null;
+        character.OnAttack = null;
+        character.OnEndAttack = null;
+        character.OnStartDefend = null;
+        character.OnEndDefend = null;
+        character.OnDeflectingAttack = null;
+
+        character.OnStartStun -= OnStartStun;
+        character.OnEndStun -= OnEndStun;
         character.OnDead -= OnDead;
     }
 
@@ -142,7 +157,7 @@ public class CharacterGraphics : MonoBehaviour
             if (blendAttack_Coroutine != null)
                 StopCoroutine(blendAttack_Coroutine);
 
-            blendAttack_Coroutine = StartCoroutine(BlendLayer(1, 1));
+            blendAttack_Coroutine = StartCoroutine(BlendLayer(1, durationBlendAttack, true));
         }
 
         //set attack
@@ -156,7 +171,44 @@ public class CharacterGraphics : MonoBehaviour
         if (blendAttack_Coroutine != null)
             StopCoroutine(blendAttack_Coroutine);
 
-        blendAttack_Coroutine = StartCoroutine(BlendLayer(1, 0));
+        blendAttack_Coroutine = StartCoroutine(BlendLayer(1, durationBlendAttack, false));
+    }
+
+    void OnStartDefend()
+    {
+        //start blend layer defend
+        if (blendDefend_Coroutine != null)
+            StopCoroutine(blendDefend_Coroutine);
+
+        blendDefend_Coroutine = StartCoroutine(BlendLayer(2, durationBlendDefend, true));
+    }
+
+    void OnEndDefend()
+    {
+        //end defend, blend layer to 0
+        if (blendDefend_Coroutine != null)
+            StopCoroutine(blendDefend_Coroutine);
+
+        blendDefend_Coroutine = StartCoroutine(BlendLayer(2, durationBlendDefend, false));
+    }
+
+    void OnDeflectingAttack()
+    {
+        //deflect attack
+        anim.SetTrigger("Deflect");
+    }
+
+    void OnStartStun()
+    {
+        //start stun
+        anim.SetBool("Stunned", true);
+        anim.SetTrigger("Stun");
+    }
+
+    void OnEndStun()
+    {
+        //end stun
+        anim.SetBool("Stunned", false);
     }
 
     void OnDead()
@@ -170,16 +222,17 @@ public class CharacterGraphics : MonoBehaviour
 
     #region general
 
-    IEnumerator BlendLayer(int layerIndex, float weight)
+    IEnumerator BlendLayer(int layerIndex, float durationBlend, bool visible)
     {
         //set start
         float delta = 0;
         float startWeight = anim.GetLayerWeight(layerIndex);
+        int weight = visible ? 1 : 0;
 
         //blend
         while (delta < 1)
         {
-            delta += Time.deltaTime / durationBlendLayer;
+            delta += Time.deltaTime / durationBlend;
 
             float newWeight = Mathf.Lerp(startWeight, weight, delta);
 

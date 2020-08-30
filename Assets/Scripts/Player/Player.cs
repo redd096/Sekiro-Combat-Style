@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using redd096;
+using System;
 
 public class Player : Character
 {
@@ -65,31 +66,22 @@ public class Player : Character
         RemoveEvents();
     }
 
+    protected override void SetWaitState(float timeToWait, State nextState, Action func = null)
+    {
+        //use player wait state, instead of normal wait state
+        SetState(new PlayerWaitState(this, timeToWait, nextState, func));
+    }
+
     #region events
 
     void AddEvents()
     {
-        OnStartStun += StartStun;
-        OnEndStun += EndStun;
         OnDead += Die;
     }
 
     void RemoveEvents()
     {
-        OnStartStun -= StartStun;
-        OnEndStun -= EndStun;
         OnDead -= Die;
-    }
-
-    void StartStun()
-    {
-        //cambia stato del giocatore, in uno che sta buono finché non finisce lo stun
-    }
-
-    void EndStun()
-    {
-        //ritorna al fight state 
-        //(lo stun parte solo se si è in difesa e ci si è rotto lo scudo... in futuro potrebbe partire in attack state se ci deflettono, ma sempre in fight state si torna)
     }
 
     void Die()
@@ -98,6 +90,7 @@ public class Player : Character
         //ovvero uno stato in cui deve smettere di muoversi, attaccare, ecc... e può solo cadere se non si trovava a terra (playerState.StopMovement())
 
         //nel caso decidessi di riportarlo in vita, l'animazione di revive c'è, lo si fa tornare allo state precedente ed è a posto
+        enabled = false;
     }
 
     #endregion

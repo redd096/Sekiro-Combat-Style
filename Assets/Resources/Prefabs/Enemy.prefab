@@ -670,6 +670,7 @@ MonoBehaviour:
     damage: 10
     slideSpeed: 4
     durationSlider: 0.5
+  delayAttack: 2
 --- !u!114 &3784112722496991807
 MonoBehaviour:
   m_ObjectHideFlags: 0

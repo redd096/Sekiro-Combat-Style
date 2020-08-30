@@ -560,6 +560,12 @@ MonoBehaviour:
       damage: 10
       slideSpeed: 4
       durationSlider: 0.5
+    - timeBeforeNextAttack: 1.7
+      timePrepareAttack: 0.2
+      durationAttack: 0.5
+      damage: 15
+      slideSpeed: 6
+      durationSlider: 0.5
   cameraControl:
     cameraOffset: {x: 0.5, y: 1.8, z: -1.7}
     firstPerson: 0

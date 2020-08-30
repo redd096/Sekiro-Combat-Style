@@ -717,6 +717,9 @@ ModelImporter:
   - first:
       41386430: 2186277476908879412
     second: ImportLogs
+  - first:
+      74: -5477205817525420928
+    second: Deflect
   externalObjects: {}
   materials:
     importMaterials: 0

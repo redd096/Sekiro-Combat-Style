@@ -728,7 +728,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -5, y: -5}
-  m_SizeDelta: {x: 140, y: 60}
+  m_SizeDelta: {x: 140, y: 70}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &409558604
 MonoBehaviour:
@@ -763,14 +763,16 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Left click - Attack
+  m_Text: 'Shift - Equip sword
+
+    Left click - Attack
 
     Right click - Defend
 
 
-    You can deflect attack
+    You can deflect attack if you
 
-    if you click at the right time'
+    defend yourself at the right time'
 --- !u!222 &409558605
 CanvasRenderer:
   m_ObjectHideFlags: 0

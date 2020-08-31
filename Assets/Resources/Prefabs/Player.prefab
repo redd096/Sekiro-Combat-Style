@@ -540,7 +540,7 @@ MonoBehaviour:
     speed: 4
     jump: 5
   fightState:
-    speed: 4
+    speed: 3
     jump: 5
   attackState:
     attacks:

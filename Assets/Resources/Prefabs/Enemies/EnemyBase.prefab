@@ -742,8 +742,11 @@ MonoBehaviour:
   timeStunned: 4
   healthBar: {fileID: 6433027295331800998}
   defenseBar: {fileID: 7926571750901696477}
+  currentHealth: 0
+  currentDefense: 0
   movingState:
     speed: 2
+    timeBeforeChangeDirection: 5
   fightState:
     speed: 3.5
     distanceAttack: 1.5

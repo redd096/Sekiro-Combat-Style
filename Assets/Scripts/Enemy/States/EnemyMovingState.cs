@@ -7,6 +7,9 @@ using UnityEngine;
 public class EnemyMovingState : EnemyState
 {
     [SerializeField] float speed = 2f;
+    [SerializeField] float timeBeforeChangeDirection = 5f;
+
+    float timerPatrol;
 
     public EnemyMovingState(StateMachine stateMachine) : base(stateMachine)
     {
@@ -24,8 +27,25 @@ public class EnemyMovingState : EnemyState
     {
         base.Execution();
 
+        //walk around
+        WalkAround();
+
         //look if player come in range
         LookForPlayer();
+    }
+
+    #region private API
+
+    void WalkAround()
+    {
+        //every few seconds
+        if(Time.time > timerPatrol)
+        {
+            //choose a destination and move
+            DoMovement(LevelManager.RandomPositionOnNavMesh(), speed);
+
+            timerPatrol = Time.time + timeBeforeChangeDirection;
+        }
     }
 
     void LookForPlayer()
@@ -38,10 +58,15 @@ public class EnemyMovingState : EnemyState
             PlayerFound();
     }
 
+    #endregion
+
     void PlayerFound()
     {
         //if player found, switch state
         enemy.SetState(enemy.fightState);
+
+        //be sure to stop movement
+        StopMovement();
 
         enemy.OnSwitchFight?.Invoke(true);
     }

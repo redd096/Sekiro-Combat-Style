@@ -199,7 +199,37 @@ public class MeleeWeapon : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Use RaycastAll to get hits. It get every collider hit
+    /// </summary>
     RaycastHit[] GetHits(int layer)
+    {
+        List<RaycastHit> hits = new List<RaycastHit>();
+
+        //foreach melee point, get hits
+        for (int i = 0; i < meleePoints.Count; i++)
+        {
+            //get direction from previous position to new melee point position
+            Vector3 direction = meleePoints[i].position - meleePreviousPositions[i];
+
+            RaycastHit[] hitsByThisMeleePoint = Physics.RaycastAll(meleePreviousPositions[i], direction, direction.magnitude, layer, QueryTriggerInteraction.Ignore);
+
+            //add every hit to the list
+            foreach (RaycastHit hit in hitsByThisMeleePoint)
+                hits.Add(hit);
+
+            //draw debug
+            if (durationDebugTraces > 0)
+                Debug.DrawRay(meleePreviousPositions[i], direction, Color.red, durationDebugTraces);
+        }
+
+        return hits.ToArray();
+    }
+
+    /// <summary>
+    /// Use LineCast to get hits. It get only the first collider hit
+    /// </summary>
+    RaycastHit[] GetHits_LineCast(int layer)
     {
         RaycastHit[] hits = new RaycastHit[meleePoints.Count];
 

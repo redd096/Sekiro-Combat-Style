@@ -32,7 +32,10 @@ public class PlayerWaitState : PlayerState
 
     public override void Execution()
     {
-        //stop also camera rotation present in PlayerState
+        base.Execution();
+
+        //lock cam to enemy
+        LookEnemy();
     }
 
     public override void Exit()

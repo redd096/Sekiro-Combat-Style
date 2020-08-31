@@ -37,6 +37,8 @@ public class Character : StateMachine, IDamage
     [Header("UI")]
     [SerializeField] Slider healthBar = default;
     [SerializeField] Slider defenseBar = default;
+    [SerializeField] Color normalDefenseColor = Color.yellow;
+    [SerializeField] Color brokenDefenseColor = Color.red;
 
     //events only animations
     public System.Action OnJump;
@@ -104,6 +106,12 @@ public class Character : StateMachine, IDamage
     {
         //update defense bar value
         defenseBar.value = currentDefense / maxDefense;
+
+        //change color if broken or normal
+        if (defenseIsBroken)
+            defenseBar.targetGraphic.color = brokenDefenseColor;
+        else
+            defenseBar.targetGraphic.color = normalDefenseColor;
     }
 
     #endregion

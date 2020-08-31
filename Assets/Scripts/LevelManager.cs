@@ -10,6 +10,8 @@ public class LevelManager : MonoBehaviour
 
     public bool gameEnded { get; private set; }
 
+    int enemyCounter;
+
     private void Start()
     {
         //spawn first enemy
@@ -91,6 +93,13 @@ public class LevelManager : MonoBehaviour
     {
         //spawn after delay
         Invoke("SpawnEnemy", delayTime);
+    }
+
+    public void UpdateEnemyCounter()
+    {
+        //update enemy counter
+        enemyCounter++;
+        GameManager.instance.uiManager.UpdateEnemyCounter(enemyCounter);
     }
 
     public static Vector3 RandomPositionOnNavMesh()

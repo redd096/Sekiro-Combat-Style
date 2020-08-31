@@ -75,6 +75,7 @@ public class Enemy : Character
         SetWaitState(2, new System.Action(() => Destroy(gameObject)), true);
 
         //spawn new enemy after few seconds
+        GameManager.instance.levelManager.UpdateEnemyCounter();
         GameManager.instance.levelManager.SpawnEnemy(4);
     }
 

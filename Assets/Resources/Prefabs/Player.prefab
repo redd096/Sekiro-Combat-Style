@@ -523,6 +523,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weapon: {fileID: 3246089697313361478}
   maxHealth: 100
+  radiusFindTarget: 20
   maxDefense: 100
   minimumDefense: 9
   delayRecharge: 2
@@ -530,7 +531,7 @@ MonoBehaviour:
   timeToDeflect: 0.2
   durationDeflectMove: 0.5
   getDeflectedDamage: 100
-  timeStunned: 2
+  timeStunned: 4
   healthBar: {fileID: 1517603214}
   defenseBar: {fileID: 2315391837720192442}
   currentHealth: 0
@@ -568,7 +569,7 @@ MonoBehaviour:
       slideSpeed: 6
       durationSlider: 0.5
   cameraControl:
-    cameraOffset: {x: 0.5, y: 1.8, z: -1.7}
+    cameraOffset: {x: 0.8, y: 1.8, z: -1.7}
     firstPerson: 0
     smoothPosition: 50
     smoothRotation: 15
@@ -580,7 +581,6 @@ MonoBehaviour:
     maxY: 30
   center: {x: 0, y: 0, z: 0}
   size: {x: 1.5, y: 0.1, z: 1}
-  radius: 20
 --- !u!114 &2306683629302918458
 MonoBehaviour:
   m_ObjectHideFlags: 0

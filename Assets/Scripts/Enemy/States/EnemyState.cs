@@ -29,6 +29,9 @@ public class EnemyState : State
         //move to destination
         nav.speed = speed;
         nav.SetDestination(destination);
+
+        //sometimes this look where he want, so maybe this fix it :mumble:
+        transform.LookAt(nav.nextPosition);
     }
 
     protected void StopMovement()

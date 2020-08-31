@@ -32,15 +32,11 @@ public class Character : StateMachine, IDamage
     [Tooltip("Damage suffered to defense when attack is being deflected")]
     [SerializeField] float getDeflectedDamage = 100;
     [Tooltip("Duration stun after shield is broken")]
-    [SerializeField] float timeStunned = 2;
+    [SerializeField] float timeStunned = 4;
 
     [Header("UI")]
     [SerializeField] Slider healthBar = default;
     [SerializeField] Slider defenseBar = default;
-
-    [Header("Debug")]
-    [SerializeField] float currentHealth;
-    [SerializeField] float currentDefense;
 
     //events only animations
     public System.Action OnJump;
@@ -56,13 +52,16 @@ public class Character : StateMachine, IDamage
     public System.Action OnEndStun;
     public System.Action OnDead;
 
+    float currentHealth;
+    float currentDefense;
+
+    Transform target;
+
     bool isDefending;
     float timeStartDefense;
     bool defenseIsBroken;
 
     Coroutine rechargeDefense_Coroutine;
-
-    Transform target;
 
     #endregion
 

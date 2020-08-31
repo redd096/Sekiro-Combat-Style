@@ -7,19 +7,94 @@ using UnityEngine;
 public class EnemyFightState : EnemyState
 {
     [SerializeField] float speed = 3.5f;
+    [Tooltip("Range of attack")]
     [SerializeField] float distanceAttack = 1.5f;
+    [Tooltip("Time to wait after enter in this state, after then enemy start defend and can move")]
+    [SerializeField] float delayCanMove = 1f;
+    [Tooltip("Time to wait after enter in this state, after the enemy can attack")]
+    [SerializeField] float delayCanAttack = 3;
+
+    Coroutine canMove_Coroutine;
+    Coroutine canAttack_Coroutine;
+
+    bool canMove;
+    bool canAttack;
 
     public EnemyFightState(StateMachine stateMachine) : base(stateMachine)
     {
+    }
+
+    public override void Enter()
+    {
+        base.Enter();
+
+        //be sure can't attack before delay
+        canAttack = false;
+
+        //start coroutines
+        canMove_Coroutine = enemy.StartCoroutine(CanMove_Coroutine());
+        canAttack_Coroutine = enemy.StartCoroutine(CanAttack_Coroutine());
     }
 
     public override void Execution()
     {
         base.Execution();
 
-        //follow player until death
-        FollowPlayer();
+        if (canMove)
+        {
+            //if defense isn't broken, defend
+            TryDefend();
+
+            //follow player until death
+            FollowPlayer();
+        }
     }
+
+    public override void Exit()
+    {
+        base.Exit();
+
+        //be sure to not have coroutines running
+        if (canMove_Coroutine != null)
+            enemy.StopCoroutine(canMove_Coroutine);
+
+        if (canAttack_Coroutine != null)
+            enemy.StopCoroutine(canAttack_Coroutine);
+    }
+
+    #region private API
+
+    #region coroutines
+
+    IEnumerator CanMove_Coroutine()
+    {
+        //wait
+        yield return new WaitForSeconds(delayCanMove);
+
+        //now can move
+        canMove = true;
+    }
+
+    IEnumerator CanAttack_Coroutine()
+    {
+        //wait
+        yield return new WaitForSeconds(delayCanAttack);
+
+        //now can attack
+        canAttack = true;
+    }
+
+    #endregion
+
+    #region try defend
+
+    void TryDefend()
+    {
+        //if defense isn't broken, defend
+        enemy.StartDefend();
+    }
+
+    #endregion
 
     #region movement
 
@@ -49,18 +124,31 @@ public class EnemyFightState : EnemyState
 
     #endregion
 
+    #endregion
+
     void NoPlayer()
     {
         //if there is no player, come back to moving state
         enemy.SetState(enemy.movingState);
 
+        //remove defense
+        enemy.StopDefend();
+
+        //animation switch fight
         enemy.OnSwitchFight?.Invoke(false);
     }
 
     void Attack()
     {
+        //do only if can attack
+        if (canAttack == false)
+            return;
+
         //if in range, attack the player
         enemy.SetState(enemy.attackState);
+
+        //remove defense
+        enemy.StopDefend();
 
         //animation first attack
         enemy.OnAttack?.Invoke(true);

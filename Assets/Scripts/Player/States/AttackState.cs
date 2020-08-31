@@ -48,6 +48,9 @@ public class AttackState : PlayerState
 
         if (slideForward_Coroutine != null)
             player.StopCoroutine(slideForward_Coroutine);
+
+        //be sure to end attack
+        player.OnEndAttack?.Invoke();
     }
 
     #region private API

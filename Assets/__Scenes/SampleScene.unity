@@ -763,11 +763,11 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Shift - Equip sword
+  m_Text: 'Shift (X) - Equip sword
 
-    Left click - Attack
+    Left click (RB) - Attack
 
-    Right click - Defend
+    Right click (LB) - Defend
 
 
     You can deflect attack if you
@@ -925,6 +925,7 @@ MonoBehaviour:
   - {fileID: 1756890538062281614, guid: b5126f48be5f7dc459eb928e131fcb90, type: 3}
   - {fileID: 5062930854448510018, guid: d8829c8cc1ab8a84e98fdbd60bc0109a, type: 3}
   - {fileID: 8399378914912041204, guid: 8f988c28a1ffaba43b5704582de02f2a, type: 3}
+  - {fileID: 5239458776635191136, guid: 65607faf01fbdd744b38971dda1380b2, type: 3}
 --- !u!1 &776437351
 GameObject:
   m_ObjectHideFlags: 0

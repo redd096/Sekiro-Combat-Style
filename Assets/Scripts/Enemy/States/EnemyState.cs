@@ -26,6 +26,8 @@ public class EnemyState : State
 
     protected void DoMovement(Vector3 destination, float speed)
     {
+        nav.isStopped = false;
+
         //move to destination
         nav.speed = speed;
         nav.SetDestination(destination);
@@ -37,6 +39,7 @@ public class EnemyState : State
     protected void StopMovement()
     {
         //stop navmesh
-        nav.SetDestination(transform.position);
+        nav.isStopped = true;
+        //nav.enabled = false;
     }
 }

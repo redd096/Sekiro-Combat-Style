@@ -64,7 +64,10 @@ public class EnemyAttackState : EnemyState
         //slide forward
         while (Time.time < time)
         {
-            DoMovement(transform.forward, currentAttack.slideSpeed);
+            Transform player = GameManager.instance.player?.transform;
+            Vector3 destination = player != null ? player.position : transform.forward;
+
+            DoMovement(destination, currentAttack.slideSpeed);
 
             yield return null;
         }

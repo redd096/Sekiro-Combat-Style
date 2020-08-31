@@ -9,6 +9,8 @@ public class WaitState : State
     State nextState;
     System.Action func;
 
+    Coroutine wait_Coroutine;
+
     public WaitState(StateMachine stateMachine, float timeToWait, State nextState, System.Action func = null) : base(stateMachine)
     {
         //set time to wait and next state
@@ -17,17 +19,32 @@ public class WaitState : State
         this.func = func;
     }
 
-    public override IEnumerator Enter()
+    public override void Enter()
     {
-        yield return base.Enter();
+        base.Enter();
 
+        //start wait coroutine
+        wait_Coroutine = stateMachine.StartCoroutine(Wait_Coroutine());
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+
+        //be sure to stop coroutines
+        if (wait_Coroutine != null)
+            stateMachine.StopCoroutine(wait_Coroutine);
+    }
+
+    IEnumerator Wait_Coroutine()
+    {
         //wait
         yield return new WaitForSeconds(timeToWait);
 
-        //go to next state
-        stateMachine.SetState(nextState);
-
         //invoke function
         func?.Invoke();
+
+        //go to next state
+        stateMachine.SetState(nextState);
     }
 }

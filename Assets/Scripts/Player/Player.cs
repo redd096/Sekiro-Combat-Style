@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using redd096;
-using System;
 
 public class Player : Character
 {
@@ -66,7 +65,7 @@ public class Player : Character
         RemoveEvents();
     }
 
-    protected override void SetWaitState(float timeToWait, State nextState, Action func = null)
+    protected override void SetWaitState(float timeToWait, State nextState, System.Action func = null)
     {
         //use player wait state, instead of normal wait state
         SetState(new PlayerWaitState(this, timeToWait, nextState, func));
@@ -86,11 +85,8 @@ public class Player : Character
 
     void Die()
     {
-        //deve entrare in uno stato di morte
-        //ovvero uno stato in cui deve smettere di muoversi, attaccare, ecc... e può solo cadere se non si trovava a terra (playerState.StopMovement())
-
-        //nel caso decidessi di riportarlo in vita, l'animazione di revive c'è, lo si fa tornare allo state precedente ed è a posto
-        enabled = false;
+        //change to wait state to stop movement, then change state to null
+        SetWaitState(0.1f, null);
     }
 
     #endregion

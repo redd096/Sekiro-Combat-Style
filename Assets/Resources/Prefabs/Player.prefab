@@ -528,6 +528,7 @@ MonoBehaviour:
   delayRecharge: 2
   rechargeSpeed: 1
   timeToDeflect: 0.2
+  durationDeflectMove: 0.5
   getDeflectedDamage: 100
   timeStunned: 2
   healthBar: {fileID: 1517603214}
@@ -594,7 +595,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   smoothMovement: 5
   durationBlendAttack: 0.5
-  durationBlendDefend: 0.2
+  durationBlendDefend: 0.35
   durationLerpWeaponPosition: 0.2
   timeBeforeGrab: 0.3
   timeBeforeRelease: 0.3

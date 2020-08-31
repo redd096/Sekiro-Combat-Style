@@ -12,13 +12,13 @@ public class FightState : MovingState
 
     public override void Execution()
     {
+        //defense (before of all, so it can be suppressed when change state)
+        Defend(Input.GetButton("Fire2"));
+
         base.Execution();
 
         //lock cam to enemy
         LookEnemy();
-
-        //defense
-        Defend(Input.GetButton("Fire2"));
 
         //attack
         Attack(Input.GetButtonDown("Fire1"));

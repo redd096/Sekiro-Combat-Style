@@ -12,16 +12,48 @@ public class AttackState : PlayerState
     AttackStruct currentAttack;
     bool goToNextAttack;
 
+    Coroutine combo_Coroutine;
     Coroutine slideForward_Coroutine;
 
     public AttackState(StateMachine stateMachine) : base(stateMachine)
     {
     }
 
-    public override IEnumerator Enter()
+    public override void Enter()
     {
-        yield return base.Enter();
+        base.Enter();
 
+        //start combo coroutine
+        combo_Coroutine = player.StartCoroutine(Combo_Coroutine());
+    }
+
+    public override void Execution()
+    {
+        base.Execution();
+
+        //lock cam to enemy
+        LookEnemy();
+
+        //check if do another attack
+        InputForNextAttack(Input.GetButtonDown("Fire1"));
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+
+        //be sure to stop coroutines
+        if (combo_Coroutine != null)
+            player.StopCoroutine(combo_Coroutine);
+
+        if (slideForward_Coroutine != null)
+            player.StopCoroutine(slideForward_Coroutine);
+    }
+
+    #region private API
+
+    IEnumerator Combo_Coroutine()
+    {
         //foreach attack in the list
         for (int i = 0; i < attacks.Length; i++)
         {
@@ -48,19 +80,6 @@ public class AttackState : PlayerState
         //come back to fight state
         EndAttack();
     }
-
-    public override void Execution()
-    {
-        base.Execution();
-
-        //lock cam to enemy
-        LookEnemy();
-
-        //check if do another attack
-        InputForNextAttack(Input.GetButtonDown("Fire1"));
-    }
-
-    #region private API
 
     #region slide
 

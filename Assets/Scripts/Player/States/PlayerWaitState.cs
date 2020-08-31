@@ -9,6 +9,8 @@ public class PlayerWaitState : PlayerState
     State nextState;
     System.Action func;
 
+    Coroutine wait_Coroutine;
+
     public PlayerWaitState(StateMachine stateMachine, float timeToWait, State nextState, System.Action func = null) : base(stateMachine)
     {
         //set time to wait and next state
@@ -17,12 +19,15 @@ public class PlayerWaitState : PlayerState
         this.func = func;
     }
 
-    public override void Awake(StateMachine stateMachine)
+    public override void Enter()
     {
-        base.Awake(stateMachine);
+        base.Enter();
 
         //be sure to stop movement
         StopMovement();
+
+        //start wait coroutine
+        wait_Coroutine = player.StartCoroutine(Wait_Coroutine());
     }
 
     public override void Execution()
@@ -30,17 +35,24 @@ public class PlayerWaitState : PlayerState
         //stop also camera rotation present in PlayerState
     }
 
-    public override IEnumerator Enter()
+    public override void Exit()
     {
-        yield return base.Enter();
+        base.Exit();
 
+        //be sure to stop coroutines
+        if (wait_Coroutine != null)
+            player.StopCoroutine(wait_Coroutine);
+    }
+
+    IEnumerator Wait_Coroutine()
+    {
         //wait
         yield return new WaitForSeconds(timeToWait);
 
-        //go to next state
-        stateMachine.SetState(nextState);
-
         //invoke function
         func?.Invoke();
+
+        //go to next state
+        stateMachine.SetState(nextState);
     }
 }

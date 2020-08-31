@@ -11,6 +11,8 @@ public class Character : StateMachine, IDamage
     [Header("Character")]
     public MeleeWeapon weapon;
     [SerializeField] float maxHealth = 100;
+    [Tooltip("Radius lock target")]
+    [SerializeField] float radiusFindTarget = 20;
 
     [Header("Defense")]
     [Tooltip("Character max defense")]
@@ -60,6 +62,8 @@ public class Character : StateMachine, IDamage
 
     Coroutine rechargeDefense_Coroutine;
 
+    Transform target;
+
     #endregion
 
     void Awake()
@@ -71,6 +75,14 @@ public class Character : StateMachine, IDamage
         //update bars
         UpdateHealthBar();
         UpdateDefenseBar();
+    }
+
+    protected virtual void OnDrawGizmosSelected()
+    {
+        //draw sphere to find nearest target
+        Gizmos.color = Color.blue;
+
+        Gizmos.DrawWireSphere(transform.position, radiusFindTarget);
     }
 
     protected void KillSelf()
@@ -149,6 +161,9 @@ public class Character : StateMachine, IDamage
         //deflect attack instead of get damage
         if(Time.time < timeStartDefense + timeToDeflect)
         {
+            StopDefend();
+
+            //deflect
             Deflect(instigator);
 
             return true;
@@ -190,28 +205,33 @@ public class Character : StateMachine, IDamage
 
     void Deflect(IDamage instigator)
     {
-        //stop defend
-        StopDefend();
+        //be sure to stop attack animation if running
+        OnEndAttack?.Invoke();
 
         //deflect attack
         instigator.AttackGetDeflected();
         OnDeflectingAttack?.Invoke();
 
         //wait, then come back to old state
-        SetWaitState(durationDeflectMove, state);
+        SetWaitState(durationDeflectMove);
     }
 
     void Stun()
     {
+        //be sure to stop attack animation if running
+        OnEndAttack?.Invoke();
+
         OnStartStun?.Invoke();
 
         //wait, then come back to old state
-        SetWaitState(timeStunned, state, OnEndStun);
+        SetWaitState(timeStunned, OnEndStun);
     }
 
-    protected virtual void SetWaitState(float timeToWait, State nextState, System.Action func = null)
+    protected virtual void SetWaitState(float timeToWait, System.Action func = null, bool nullState = false)
     {
-        //wait, then come back to old state
+        State nextState = nullState ? null : state;
+
+        //wait, then go to next state
         SetState(new WaitState(this, timeToWait, nextState, func));
     }
 
@@ -220,6 +240,8 @@ public class Character : StateMachine, IDamage
     #endregion
 
     #region public API
+
+    #region IDamage
 
     public virtual void ApplyDamage(IDamage instigator, float damage)
     {
@@ -240,6 +262,10 @@ public class Character : StateMachine, IDamage
         //get hit from deflect
         DamageDefense(getDeflectedDamage);
     }
+
+    #endregion
+
+    #region defend
 
     public void StartDefend()
     {
@@ -268,6 +294,27 @@ public class Character : StateMachine, IDamage
             OnEndDefend?.Invoke();
         }
     }
+
+    #endregion
+
+    #region target
+
+    public Transform GetTarget(string layerName)
+    {
+        //if not enemy
+        if (target == null)
+        {
+            int layer = CreateLayer.LayerOnly(layerName); ;
+
+            //find nearest enemy
+            Collider[] targets = Physics.OverlapSphere(transform.position, radiusFindTarget, layer, QueryTriggerInteraction.Ignore);
+            target = Utility.FindNearest(targets, transform.position)?.transform;
+        }
+
+        return target;
+    }
+
+    #endregion
 
     #endregion
 }

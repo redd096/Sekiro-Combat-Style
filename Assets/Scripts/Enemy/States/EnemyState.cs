@@ -23,4 +23,17 @@ public class EnemyState : State
         transform = enemy.transform;
         nav = enemy.GetComponent<NavMeshAgent>();
     }
+
+    protected void DoMovement(Vector3 destination, float speed)
+    {
+        //move to destination
+        nav.speed = speed;
+        nav.SetDestination(destination);
+    }
+
+    protected void StopMovement()
+    {
+        //stop navmesh
+        nav.SetDestination(transform.position);
+    }
 }

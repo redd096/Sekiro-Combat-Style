@@ -51,11 +51,11 @@ public class PlayerState : State
     protected void LookEnemy()
     {
         //look enemy
-        Enemy enemy = player.GetEnemy();
+        Transform target = player.GetTarget("Enemy");
 
-        if (enemy)
+        if (target)
         {
-            Vector3 lookEnemy = enemy.transform.position - transform.position;
+            Vector3 lookEnemy = target.position - transform.position;
             cameraControl.SetRotation(Quaternion.LookRotation(lookEnemy));
         }
     }

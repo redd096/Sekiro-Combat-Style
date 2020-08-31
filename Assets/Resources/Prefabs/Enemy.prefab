@@ -651,26 +651,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weapon: {fileID: 1832256564023334498}
   maxHealth: 100
+  radiusFindTarget: 20
   maxDefense: 100
   minimumDefense: 9
   delayRecharge: 2
   rechargeSpeed: 1
   timeToDeflect: 0.2
+  durationDeflectMove: 0.5
   getDeflectedDamage: 100
   timeStunned: 2
   healthBar: {fileID: 6433027295331800998}
   defenseBar: {fileID: 7926571750901696477}
   currentHealth: 0
   currentDefense: 0
-  distanceAttack: 1.5
-  currentAttack:
-    timeBeforeNextAttack: 0.8
-    timePrepareAttack: 0.1
-    durationAttack: 0.6
-    damage: 10
-    slideSpeed: 4
-    durationSlider: 0.5
-  delayAttack: 2
+  movingState:
+    speed: 2
+  fightState:
+    speed: 3.5
+    distanceAttack: 1.5
+  attackState:
+    currentAttack:
+      timeBeforeNextAttack: 0.8
+      timePrepareAttack: 0.1
+      durationAttack: 0.6
+      damage: 10
+      slideSpeed: 4
+      durationSlider: 0.5
 --- !u!114 &3784112722496991807
 MonoBehaviour:
   m_ObjectHideFlags: 0

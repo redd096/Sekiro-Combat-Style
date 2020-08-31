@@ -1,7 +1,5 @@
 ﻿namespace redd096
 {
-    using System.Collections;
-    using System.Collections.Generic;
     using UnityEngine;
 
     [AddComponentMenu("redd096/Singletons/Game Manager")]
@@ -9,12 +7,14 @@
     {
         public Player player { get; private set; }
         public UIManager uiManager { get; private set; }
+        public LevelManager levelManager { get; private set; }
 
         protected override void SetDefaults()
         {
             //get references
             player = FindObjectOfType<Player>();
             uiManager = FindObjectOfType<UIManager>();
+            levelManager = FindObjectOfType<LevelManager>();
 
             //if there is a player, lock mouse
             if (player)

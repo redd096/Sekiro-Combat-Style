@@ -16,13 +16,9 @@ public class Player : Character
     [Header("Check Ground")]
     [SerializeField] Vector3 center = Vector3.zero;
     [SerializeField] Vector3 size = Vector3.one;
-    [Header("Radius Lock Enemy")]
-    [SerializeField] float radius = 20;
 
     //check in a box, if hit something other than the player
     public bool IsGrounded => Physics.OverlapBox(transform.position + center, size / 2, transform.rotation, CreateLayer.LayerAllExcept("Player"), QueryTriggerInteraction.Ignore).Length > 0;
-
-    Enemy enemy;
 
     #endregion
 
@@ -43,8 +39,10 @@ public class Player : Character
         state?.Execution();
     }
 
-    private void OnDrawGizmosSelected()
+    protected override void OnDrawGizmosSelected()
     {
+        base.OnDrawGizmosSelected();
+
         //draw check ground
         Gizmos.color = Color.red; 
 
@@ -52,11 +50,6 @@ public class Player : Character
         Matrix4x4 rotationMatrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
         Gizmos.matrix = rotationMatrix;
         Gizmos.DrawWireCube(center, size);
-
-        //draw sphere to find nearest enemy
-        Gizmos.color = Color.blue;
-
-        Gizmos.DrawWireSphere(transform.position, radius);
     }
 
     private void OnDestroy()
@@ -65,9 +58,12 @@ public class Player : Character
         RemoveEvents();
     }
 
-    protected override void SetWaitState(float timeToWait, State nextState, System.Action func = null)
+    protected override void SetWaitState(float timeToWait, System.Action func = null, bool nullState = false)
     {
-        //use player wait state, instead of normal wait state
+        //this function is called only on stun or deflect, so come back always to fight state. Else null if we want a nullState
+        State nextState = nullState ? null : fightState;
+
+        //wait, then go to next state
         SetState(new PlayerWaitState(this, timeToWait, nextState, func));
     }
 
@@ -86,24 +82,7 @@ public class Player : Character
     void Die()
     {
         //change to wait state to stop movement, then change state to null
-        SetWaitState(0.1f, null);
-    }
-
-    #endregion
-
-    #region public API
-
-    public Enemy GetEnemy()
-    {
-        //if not enemy
-        if (enemy == null)
-        {
-            //find nearest enemy
-            Collider[] enemies = Physics.OverlapSphere(transform.position, radius, CreateLayer.LayerOnly("Enemy"), QueryTriggerInteraction.Ignore);
-            enemy = Utility.FindNearest(enemies, transform.position)?.GetComponentInParent<Enemy>();
-        }
-
-        return enemy;
+        SetWaitState(0.1f, null, true);
     }
 
     #endregion

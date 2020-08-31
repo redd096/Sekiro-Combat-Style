@@ -2,48 +2,43 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class Enemy : Character
 {
     [Header("Enemy")]
-    [SerializeField] float distanceAttack = 1.5f;
-    [SerializeField] AttackStruct currentAttack = default;
-
-    NavMeshAgent nav;
-    Transform player;
-
-    [SerializeField] float delayAttack = 2;
-    float timer;
+    public EnemyMovingState movingState;
+    public EnemyFightState fightState;
+    public EnemyAttackState attackState;
 
     bool stunned;
 
     void Start()
     {
-        nav = GetComponent<NavMeshAgent>();
-        player = GameManager.instance.player?.transform;
+        //set state
+        SetState(movingState);
 
         //add events
         AddEvents();
-
-        //equip sword
-        if (player)
-            OnSwitchFight?.Invoke(true);
     }
 
-    void Update()
+    private void Update()
     {
-        //do only if there is player
-        if (player == null)
-            return;
-
-        Movement();
-        Attack();
+        state?.Execution();
     }
 
     private void OnDestroy()
     {
+        //remove events
         RemoveEvents();
+    }
+
+    protected override void SetWaitState(float timeToWait, System.Action func = null, bool nullState = false)
+    {
+        //this function is called only on stun or deflect, so come back always to fight state. Else null if we want a nullState
+        State nextState = nullState ? null : fightState;
+
+        //wait, then go to next state
+        SetState(new EnemyWaitState(this, timeToWait, nextState, func));
     }
 
     #region private API
@@ -76,66 +71,11 @@ public class Enemy : Character
 
     void Die()
     {
-        //stop update and stop navmesh
-        enabled = false;
-        StopMovement();
-    }
+        //change to wait state to stop movement, then after few seconds destroy
+        SetWaitState(2, new System.Action(() => Destroy(gameObject)), true);
 
-    #endregion
-
-    #region movement
-
-    void Movement()
-    {
-        //if not in attack range, move to player - else don't move
-        if (CheckInRange() == false)
-            nav.SetDestination(player.position);
-        else
-            StopMovement();
-    }
-
-    void StopMovement()
-    {
-        //stop navmesh
-        nav.SetDestination(transform.position);
-    }
-
-    #endregion
-
-    #region attack
-
-    void Attack()
-    {
-        //if player in range attack
-        if(CheckInRange() && Time.time > timer)
-        {
-            //create layer to hit only enemy and player, and be sure to ignore self
-            int layer = CreateLayer.LayerOnly(new string[] { "Enemy", "Player" });
-            IDamage self = transform.GetComponent<IDamage>();
-
-            //start weapon attack
-            weapon.Attack(currentAttack.timePrepareAttack, currentAttack.durationAttack, currentAttack.damage, layer, self);
-
-            OnAttack?.Invoke(true);
-            timer = Time.time + delayAttack;
-
-            Invoke("EndAttack", delayAttack);
-        }
-    }
-
-    void EndAttack()
-    {
-        OnEndAttack?.Invoke();
-    }
-
-    #endregion
-
-    #region general
-
-    bool CheckInRange()
-    {
-        //check player distance
-        return Vector3.Distance(transform.position, player.position) <= distanceAttack;
+        //spawn new enemy after few seconds
+        GameManager.instance.levelManager.SpawnEnemy(4);
     }
 
     #endregion

@@ -748,6 +748,7 @@ MonoBehaviour:
     speed: 3.5
     distanceAttack: 1.5
     delayCanMove: 1
+    delayCanDefend: 1.5
     delayCanAttack: 3
   attackState:
     currentAttack:

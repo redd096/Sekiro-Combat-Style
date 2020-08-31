@@ -52,8 +52,9 @@ public class Character : StateMachine, IDamage
     public System.Action OnEndStun;
     public System.Action OnDead;
 
-    float currentHealth;
-    float currentDefense;
+    [Header("Debug")]
+    [SerializeField] float currentHealth;
+    [SerializeField] float currentDefense;
 
     Transform target;
 
@@ -111,6 +112,10 @@ public class Character : StateMachine, IDamage
 
     void DamageHealth(float damage)
     {
+        //only if not already dead
+        if (currentHealth <= 0)
+            return;
+
         //apply damage
         currentHealth -= damage;
         currentHealth = Mathf.Max(currentHealth, 0);

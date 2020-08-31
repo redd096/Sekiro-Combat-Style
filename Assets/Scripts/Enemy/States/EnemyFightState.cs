@@ -9,15 +9,19 @@ public class EnemyFightState : EnemyState
     [SerializeField] float speed = 3.5f;
     [Tooltip("Range of attack")]
     [SerializeField] float distanceAttack = 1.5f;
-    [Tooltip("Time to wait after enter in this state, after then enemy start defend and can move")]
+    [Tooltip("Time to wait after enter in this state, after the enemy can move")]
     [SerializeField] float delayCanMove = 1f;
+    [Tooltip("Time to wait after enter in this state, after the enemy can defend")]
+    [SerializeField] float delayCanDefend = 2f;
     [Tooltip("Time to wait after enter in this state, after the enemy can attack")]
-    [SerializeField] float delayCanAttack = 3;
+    [SerializeField] float delayCanAttack = 3f;
 
     Coroutine canMove_Coroutine;
+    Coroutine canDefend_Coroutine;
     Coroutine canAttack_Coroutine;
 
     bool canMove;
+    bool canDefend;
     bool canAttack;
 
     public EnemyFightState(StateMachine stateMachine) : base(stateMachine)
@@ -28,11 +32,14 @@ public class EnemyFightState : EnemyState
     {
         base.Enter();
 
-        //be sure can't attack before delay
+        //be sure to wait delays
+        canMove = false;
+        canDefend = false;
         canAttack = false;
 
         //start coroutines
         canMove_Coroutine = enemy.StartCoroutine(CanMove_Coroutine());
+        canDefend_Coroutine = enemy.StartCoroutine(CanDefend_Coroutine());
         canAttack_Coroutine = enemy.StartCoroutine(CanAttack_Coroutine());
     }
 
@@ -40,14 +47,11 @@ public class EnemyFightState : EnemyState
     {
         base.Execution();
 
-        if (canMove)
-        {
-            //if defense isn't broken, defend
-            TryDefend();
+        //if defense isn't broken, defend
+        TryDefend();
 
-            //follow player until death
-            FollowPlayer();
-        }
+        //follow player until death
+        FollowPlayer();
     }
 
     public override void Exit()
@@ -57,6 +61,9 @@ public class EnemyFightState : EnemyState
         //be sure to not have coroutines running
         if (canMove_Coroutine != null)
             enemy.StopCoroutine(canMove_Coroutine);
+
+        if (canDefend_Coroutine != null)
+            enemy.StopCoroutine(canDefend_Coroutine);
 
         if (canAttack_Coroutine != null)
             enemy.StopCoroutine(canAttack_Coroutine);
@@ -75,6 +82,15 @@ public class EnemyFightState : EnemyState
         canMove = true;
     }
 
+    IEnumerator CanDefend_Coroutine()
+    {
+        //wait
+        yield return new WaitForSeconds(delayCanDefend);
+
+        //now can defend
+        canDefend = true;
+    }
+
     IEnumerator CanAttack_Coroutine()
     {
         //wait
@@ -90,6 +106,10 @@ public class EnemyFightState : EnemyState
 
     void TryDefend()
     {
+        //do only if can defend
+        if (canDefend == false)
+            return;
+
         //if defense isn't broken, defend
         enemy.StartDefend();
     }
@@ -100,6 +120,10 @@ public class EnemyFightState : EnemyState
 
     void FollowPlayer()
     {
+        //do only if can move
+        if (canMove == false)
+            return;
+
         Transform player = GameManager.instance.player?.transform;
 
         //if there is no player, come back to moving state

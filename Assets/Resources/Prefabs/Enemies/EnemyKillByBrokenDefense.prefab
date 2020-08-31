@@ -74,13 +74,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5239458776635191136, guid: 65607faf01fbdd744b38971dda1380b2,
         type: 3}
-      propertyPath: rechargeSpeed
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5239458776635191136, guid: 65607faf01fbdd744b38971dda1380b2,
-        type: 3}
       propertyPath: maxHealth
-      value: 500
+      value: 1500
       objectReference: {fileID: 0}
     - target: {fileID: 9037533566934994954, guid: 65607faf01fbdd744b38971dda1380b2,
         type: 3}

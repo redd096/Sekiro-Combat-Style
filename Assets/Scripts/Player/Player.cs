@@ -82,7 +82,7 @@ public class Player : Character
     void Die()
     {
         //change to wait state to stop movement, then change state to null
-        SetWaitState(0.1f, null, true);
+        SetWaitState(5, null, true);
     }
 
     #endregion
